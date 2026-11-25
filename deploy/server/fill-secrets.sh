@@ -22,7 +22,7 @@ set_value() {                                          # set_value KEY VALUE (on
 }
 
 # YouMart-specific (not secret)
-sed -i 's#^BACKEND_IMAGE=ghcr.io/CHANGE_ME/#BACKEND_IMAGE=ghcr.io/vijesh11kumar11/#; s#^WEB_IMAGE=ghcr.io/CHANGE_ME/#WEB_IMAGE=ghcr.io/vijesh11kumar11/#' "$ENV"
+sed -i 's#^BACKEND_IMAGE=ghcr.io/CHANGE_ME/#BACKEND_IMAGE=ghcr.io/vijeshkumar112003/#; s#^WEB_IMAGE=ghcr.io/CHANGE_ME/#WEB_IMAGE=ghcr.io/vijeshkumar112003/#' "$ENV"
 sed -i 's#^BACKUP_S3_URI=s3://CHANGE_ME-youmart-backups/postgres#BACKUP_S3_URI=s3://youmart-prod-backups-793854110046/postgres#' "$ENV"
 set_value DEFAULT_SELLER_ID 01a085ce-8a92-7078-bb6f-4ed2476e4064
 

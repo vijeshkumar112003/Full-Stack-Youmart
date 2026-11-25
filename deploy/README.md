@@ -107,7 +107,7 @@ Backups of the disk: AWS Backup -> Create backup plan -> daily, keep 7 days -> a
 ```bash
 sudo -i
 # get the deploy files (fine-grained GitHub token with read-only "Contents" on the repo)
-git clone --depth 1 https://<TOKEN>@github.com/vijesh11kumar11/Full-Stack-Youmart.git /tmp/ym
+git clone --depth 1 https://github.com/vijeshkumar112003/Full-Stack-Youmart.git /tmp/ym
 bash /tmp/ym/deploy/server/bootstrap.sh
 cp /tmp/ym/deploy/docker-compose.prod.yml /tmp/ym/deploy/Caddyfile /opt/youmart/
 cp -r /tmp/ym/deploy/server /opt/youmart/ && chmod +x /opt/youmart/server/*.sh
@@ -146,7 +146,7 @@ sudo -u ubuntu docker login ghcr.io -u <github-username>   # paste the token as 
 1. IAM -> Identity providers -> Add -> OpenID Connect: `https://token.actions.githubusercontent.com`,
    audience `sts.amazonaws.com`.
 2. IAM role `youmart-github-deploy`, trusted by that provider, condition
-   `token.actions.githubusercontent.com:sub` = `repo:vijesh11kumar11/Full-Stack-Youmart:environment:production`.
+   `token.actions.githubusercontent.com:sub` = `repo:vijeshkumar112003/Full-Stack-Youmart:environment:production`.
    Permissions: `ssm:SendCommand` on instances tagged `Project=youmart` + the custom document
    `YouMart-Deploy` (create it in Systems Manager -> Documents from `deploy/ssm/YouMart-Deploy.json`;
    it can only run `deploy.sh <version>`), and `ssm:GetCommandInvocation`.
