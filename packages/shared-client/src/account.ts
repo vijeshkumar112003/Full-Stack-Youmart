@@ -11,6 +11,8 @@ export const LOGIN_RETURN_PATHS = [
   ROUTES.orderNotifications,
   // A product page ("log in to write a review").
   '/product',
+  // QR Login: back to the scanner (a pending scanned code waits in sessionStorage).
+  '/scan',
 ];
 
 /** Customer-facing text for an OTP request/verify failure (ApiError envelope from auth-service). */

@@ -71,6 +71,7 @@ jobs:
           build-args: |
             NEXT_PUBLIC_API_URL=${{ vars.SITE_URL || 'https://youmart.in' }}/api
             NEXT_PUBLIC_SITE_URL=${{ vars.SITE_URL || 'https://youmart.in' }}
+            NEXT_PUBLIC_BRANDFETCH_CLIENT_ID=${{ vars.BRANDFETCH_CLIENT_ID }}
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,scope=${{ matrix.name }},mode=max
 

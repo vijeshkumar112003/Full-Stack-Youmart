@@ -250,3 +250,11 @@ body:has(> .skiptranslate) {
 @media (prefers-reduced-motion: reduce) {
   .ym-save-pop, .ym-save-ring { animation: none; }
 }
+
+/* Phone home (app look): floating refer coins, bottom sheets sliding up. */
+@keyframes ym-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes ym-sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[ym-float_2\.6s_ease-in-out_infinite\] { animation: none; }
+}
+@keyframes ym-scanline { from { transform: translateY(0); } to { transform: translateY(242px); } }

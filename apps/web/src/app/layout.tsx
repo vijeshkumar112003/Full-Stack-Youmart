@@ -4,6 +4,7 @@ import { SiteHeader } from '@/components/layout/SiteHeader';
 import { WelcomeBar } from '@/components/layout/WelcomeBar';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { SiteFooter } from '@/components/layout/SiteFooter';
+import { AppFooter } from '@/components/mhome/HomeSections';
 import { CartToast } from '@/components/cart/CartToast';
 import { INTRO_SKIP_SCRIPT, IntroSplash } from '@/components/layout/IntroSplash';
 import { StoreChrome } from '@/components/layout/StoreChrome';
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="content">{children}</main>
         <StoreChrome>
           <SiteFooter />
+          <AppFooter />
           <MobileBottomNav />
           <CartToast />
         </StoreChrome>

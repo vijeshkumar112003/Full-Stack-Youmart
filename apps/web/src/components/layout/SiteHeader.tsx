@@ -1,9 +1,7 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { Bell, Download, Heart, Menu, PackageSearch, ShoppingCart } from 'lucide-react';
+import { Bell, Download, Headset, Heart, Package, PackageSearch, QrCode, ShoppingCart } from 'lucide-react';
 import { BUSINESS, ROUTES } from '@youmart/shared-client';
 import { useSession } from '@/lib/session';
 import { useCartCount } from '@/lib/cart';
@@ -12,9 +10,8 @@ import { useUnreadCount } from '@/lib/inbox';
 import { CartCountBadge, cartLinkLabel } from '@/components/cart/CartCountBadge';
 import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
-import { MobileCategoryDrawer } from './MobileCategoryDrawer';
+import { DeliveryBar } from './DeliveryBar';
 import { FaMapMarkerAlt, FaUser, FaWhatsapp } from '@/components/ui/FaIcons';
-import { storeCategories } from '@/lib/categories';
 
 interface DesktopAction {
   href: string;
@@ -79,39 +76,27 @@ function TwoLineLabel({ lines, className }: { lines: [string, string?]; classNam
   );
 }
 
-/** Small icon + stacked 10px Outfit label used by the mobile and tablet headers. */
-function CompactLink({
+/** The app header's quick tile: icon over a 1-2 line 9.5px label, all in brand blue. */
+function AppTile({
   href,
-  lines,
+  label,
   icon,
-  align,
+  ariaLabel,
 }: {
   href: string;
-  lines: [string, string];
+  label: [string, string?];
   icon: React.ReactNode;
-  align: 'left' | 'center';
+  ariaLabel?: string;
 }) {
   return (
-    <Link href={href} className="flex items-center gap-[6px]">
+    <Link href={href} aria-label={ariaLabel} className="flex w-[46px] flex-col items-center gap-[2px] text-brand">
       {icon}
-      <TwoLineLabel
-        lines={lines}
-        className={`font-ui text-[10px] font-semibold leading-[10.5px] text-ink-strong ${align === 'center' ? 'text-center' : 'text-left'}`}
-      />
+      <TwoLineLabel lines={label} className="text-center font-ui text-[9.5px] font-semibold leading-[11px]" />
     </Link>
   );
 }
 
-const trackOrderIcon = (
-  <Image src="/icons/track-order.png" alt="" width={34} height={34} className="size-[34px]" />
-);
-const customerCareIcon = (
-  <Image src="/icons/customer-care.png" alt="" width={34} height={34} className="size-[34px]" />
-);
-
 export function SiteHeader() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
   const session = useSession();
   const cartCount = useCartCount();
   const wishlistCount = useWishlistCount();
@@ -121,81 +106,36 @@ export function SiteHeader() {
   const accountLines: [string, string] =
     session.status === 'authenticated' ? ['Hi,', firstName ?? 'there'] : ['My', 'Account'];
 
-  const hamburger = (width: string) => (
-    <button
-      type="button"
-      aria-label="Open category menu"
-      aria-expanded={drawerOpen}
-      aria-controls="mobile-category-drawer"
-      onClick={() => setDrawerOpen(true)}
-      className={`flex h-[44px] shrink-0 items-center justify-center text-ink-icon ${width}`}
-    >
-      <Menu aria-hidden="true" className="h-[22px] w-[22px]" strokeWidth={2.5} />
-    </button>
-  );
-
   return (
     <header className="bg-white">
-      {/* Mobile (< 768px): logo row 75px + search row 56px */}
-      <div className="md:hidden">
-        <div className="flex h-[75px] items-center pr-[2px]">
-          {hamburger('w-[32px]')}
-          <Logo variant="mobile" className="ml-[11px] w-[138px]" priority />
-          <nav aria-label="Quick links" className="ml-auto flex items-center gap-[28px]">
-            <CompactLink
-              href={ROUTES.trackOrder}
-              lines={['Track', 'Order']}
-              icon={trackOrderIcon}
-              align="left"
-            />
-            <CompactLink
-              href={ROUTES.customerCare}
-              lines={['Customer', 'Care']}
-              icon={customerCareIcon}
-              align="center"
-            />
-            <Link
+      {/* Phone + tablet (< 1025px): the app's header - logo, QR Login / Track Order / Alerts /
+          Customer Care tiles, "Deliver to" and the search bar (camera + voice). */}
+      <div className="flex flex-col px-[16px] pb-[12px] pt-[8px] lg:hidden">
+        <div className="flex items-center justify-between">
+          <Logo variant="mobile" className="w-[132px]" priority />
+          <nav aria-label="Quick links" className="ml-auto flex items-start gap-[6px]">
+            <AppTile href="/scan" label={['QR', 'Login']} icon={<QrCode aria-hidden="true" className="size-[22px]" strokeWidth={1.8} />} />
+            <AppTile href={ROUTES.trackOrder} label={['Track', 'Order']} icon={<Package aria-hidden="true" className="size-[22px]" strokeWidth={1.8} />} />
+            <AppTile
               href={ROUTES.notifications}
-              aria-label={unread > 0 ? `Notifications, ${unread} unread` : 'Notifications'}
-              className="relative mr-[8px] flex size-[34px] items-center justify-center text-brand"
-            >
-              <Bell aria-hidden="true" className="size-[24px]" strokeWidth={2.25} />
-              {unread > 0 && (
-                <span
-                  aria-hidden="true"
-                  className="absolute -right-[3px] -top-[2px] flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-[#e11d48] px-[4px] font-ui text-[10px] font-bold leading-none text-white ring-2 ring-white"
-                >
-                  {unread > 9 ? '9+' : unread}
+              label={['Alerts']}
+              ariaLabel={unread > 0 ? `Alerts, ${unread} unread` : 'Alerts'}
+              icon={
+                <span className="relative">
+                  <Bell aria-hidden="true" className={`size-[22px] ${unread > 0 ? 'fill-brand' : ''}`} strokeWidth={1.8} />
+                  {unread > 0 ? (
+                    <span aria-hidden="true" className="absolute -right-[9px] -top-[5px] flex h-[17px] min-w-[17px] items-center justify-center rounded-full border-[1.5px] border-white bg-[#e11d48] px-[4px] font-ui text-[9.5px] font-bold leading-none text-white">
+                      {unread > 9 ? '9+' : unread}
+                    </span>
+                  ) : null}
                 </span>
-              )}
-            </Link>
+              }
+            />
+            <AppTile href={ROUTES.customerCare} label={['Customer', 'Care']} icon={<Headset aria-hidden="true" className="size-[22px]" strokeWidth={1.8} />} />
           </nav>
         </div>
-        <div className="h-[56px] px-[10px] pt-[10px]">
-          <SearchBar id="search-mobile" size="mobile" />
-        </div>
-      </div>
-
-      {/* Tablet (768-1024px): single 101px row */}
-      <div className="hidden h-[101px] items-center md:flex lg:hidden">
-        {/* Live has no tablet navigation (defect); the hamburger sits inside live's 27px logo gutter. */}
-        {hamburger('w-[27px]')}
-        <Logo className="w-[144px]" priority />
-        <SearchBar id="search-tablet" size="mobile" className="-mt-px ml-[16px] w-[41%] shrink-0" />
-        <nav aria-label="Quick links" className="ml-auto mr-[12px] flex items-center gap-[24px]">
-          <CompactLink
-            href={ROUTES.addresses}
-            lines={['Delivery', 'Location']}
-            icon={<FaMapMarkerAlt className="h-[24px] w-[18px] text-brand" />}
-            align="center"
-          />
-          <CompactLink
-            href={ROUTES.customerCare}
-            lines={['Customer', 'Care']}
-            icon={customerCareIcon}
-            align="center"
-          />
-        </nav>
+        <DeliveryBar />
+        <SearchBar id="search-mobile" size="app" className="mt-[12px]" />
       </div>
 
       {/* Desktop (>= 1025px): 121px row, geometry scaled exactly like the live Elementor columns */}
@@ -252,7 +192,6 @@ export function SiteHeader() {
         </nav>
       </div>
 
-      <MobileCategoryDrawer open={drawerOpen} onClose={closeDrawer} categories={storeCategories} />
     </header>
   );
 }

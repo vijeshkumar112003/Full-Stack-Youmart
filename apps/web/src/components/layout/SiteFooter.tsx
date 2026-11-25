@@ -73,7 +73,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-[40px] bg-brand text-white">
+    <footer className="mt-[40px] hidden bg-brand text-white lg:block">
       <div className="px-[30px] pt-[40px] md:grid md:grid-cols-2 lg:flex">
         <FooterColumn heading={FOOTER.about.heading} className="pb-[10px] pr-[10px] lg:w-[19%]">
           <p className="mb-[21px] font-ui text-[12px] leading-[23.35px] lg:leading-[25.6px]">

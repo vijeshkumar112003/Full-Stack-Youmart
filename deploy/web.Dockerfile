@@ -8,8 +8,11 @@ RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_SITE_URL
+# Brandfetch's public client id (it appears in every logo URL); empty = brand names instead of logos.
+ARG NEXT_PUBLIC_BRANDFETCH_CLIENT_ID=
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
     NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
+    NEXT_PUBLIC_BRANDFETCH_CLIENT_ID=$NEXT_PUBLIC_BRANDFETCH_CLIENT_ID \
     NEXT_STANDALONE=1
 
 COPY . .

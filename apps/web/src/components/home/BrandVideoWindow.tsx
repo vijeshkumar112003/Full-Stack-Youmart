@@ -61,7 +61,7 @@ export function BrandVideoWindow() {
   return (
     <aside
       aria-label={ad ? 'Sponsored video' : 'Brand video'}
-      className="fixed bottom-[24px] right-[24px] z-[70] hidden w-[172px] overflow-hidden rounded-[16px] bg-black font-ui shadow-[0_18px_48px_rgba(15,23,42,0.4)] ring-1 ring-black/10 lg:block"
+      className="fixed bottom-[calc(92px+env(safe-area-inset-bottom))] right-[12px] z-[45] w-[128px] overflow-hidden rounded-[16px] bg-black font-ui shadow-[0_18px_48px_rgba(15,23,42,0.4)] ring-1 ring-black/10 lg:bottom-[24px] lg:right-[24px] lg:z-[70] lg:w-[172px]"
     >
       <div className="relative aspect-[9/16]">
         {source.kind === 'ad' ? (
@@ -92,7 +92,18 @@ export function BrandVideoWindow() {
           {muted ? <VolumeX aria-hidden="true" className="size-[15px]" /> : <Volume2 aria-hidden="true" className="size-[15px]" />}
         </button>
       </div>
-      <div className="bg-white px-[10px] py-[8px]">
+      {/* Phone: the app's compact blue bar - brand name + a yellow Shop pill. */}
+      {shop || link ? (
+        <a
+          href={shop ?? link ?? '#'}
+          {...(shop ? {} : { target: '_blank', rel: 'noopener noreferrer sponsored' })}
+          className="flex items-center justify-between gap-[6px] bg-brand px-[10px] py-[7px] lg:hidden"
+        >
+          <span className="truncate text-[12.5px] font-bold uppercase text-white">{shop ? youtube?.brand : label}</span>
+          <span className="shrink-0 rounded-[6px] bg-[#ffd814] px-[8px] py-[2px] text-[11.5px] font-bold text-heading">{shop ? 'Shop' : 'Visit'}</span>
+        </a>
+      ) : null}
+      <div className="hidden bg-white px-[10px] py-[8px] lg:block">
         <p className="truncate text-[12px] font-semibold text-heading">{label}</p>
         <p className="truncate text-[11.5px] text-ink-muted">{caption}</p>
         {shop ? (

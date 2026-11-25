@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Camera, Mic } from 'lucide-react';
+import { Camera, Mic, Search } from 'lucide-react';
 import { SEARCH_PLACEHOLDER } from '@youmart/shared-client';
 import { SearchSuggestPanel, rememberSearch, useSearchSuggest } from './SearchSuggest';
 
@@ -29,7 +29,7 @@ interface SearchBarProps {
   id: string;
   className?: string;
   /** Mobile/tablet mic target is 35px (31px glyph box); desktop is 28px (24px). */
-  size?: 'desktop' | 'mobile';
+  size?: 'desktop' | 'mobile' | 'app';
 }
 
 export function SearchBar({ id, className = '', size = 'desktop' }: SearchBarProps) {
@@ -91,6 +91,7 @@ export function SearchBar({ id, className = '', size = 'desktop' }: SearchBarPro
   };
 
   const mobile = size === 'mobile';
+  const app = size === 'app';
 
   return (
     <form
@@ -126,19 +127,40 @@ export function SearchBar({ id, className = '', size = 'desktop' }: SearchBarPro
         aria-expanded={open}
         aria-autocomplete="list"
         placeholder={SEARCH_PLACEHOLDER}
-        className={`h-[36px] w-full rounded-full border-2 border-brand-accent bg-white py-[7px] pl-[15px] font-sans text-[16px] text-ink-input transition-shadow placeholder:text-ink-placeholder focus:shadow-search-focus focus:outline-none [&::-webkit-search-cancel-button]:hidden ${mobile ? 'pr-[45px]' : 'pr-[75px]'}`}
+        className={
+          app
+            ? 'h-[42px] w-full rounded-[10px] border-2 border-brand-accent bg-white py-[7px] pl-[42px] pr-[84px] font-sans text-[16px] text-ink-input transition-shadow placeholder:text-[15px] placeholder:text-ink-placeholder focus:shadow-search-focus focus:outline-none [&::-webkit-search-cancel-button]:hidden'
+            : `h-[36px] w-full rounded-full border-2 border-brand-accent bg-white py-[7px] pl-[15px] font-sans text-[16px] text-ink-input transition-shadow placeholder:text-ink-placeholder focus:shadow-search-focus focus:outline-none [&::-webkit-search-cancel-button]:hidden ${mobile ? 'pr-[45px]' : 'pr-[75px]'}`
+        }
       />
+      {app ? (
+        <Search aria-hidden="true" className="pointer-events-none absolute left-[15px] top-[12px] size-[18px] text-ink-placeholder" />
+      ) : null}
       {/* YouMart Lens: search with a photo. */}
       <Link
         href="/lens"
         aria-label="Search with a photo"
         title="Search with a photo"
-        className={`absolute top-[4px] flex size-[28px] items-center justify-center rounded-full bg-white text-black hover:text-hover ${mobile ? 'right-[10px]' : 'right-[40px]'}`}
+        className={
+          app
+            ? 'absolute right-[42px] top-[5px] flex size-[32px] items-center justify-center text-brand'
+            : `absolute top-[4px] flex size-[28px] items-center justify-center rounded-full bg-white text-black hover:text-hover ${mobile ? 'right-[10px]' : 'right-[40px]'}`
+        }
       >
-        <Camera aria-hidden="true" className="size-[20px]" strokeWidth={2} />
+        <Camera aria-hidden="true" className={app ? 'size-[21px]' : 'size-[20px]'} strokeWidth={app ? 1.8 : 2} />
       </Link>
       {/* Live's mobile search has no voice button; keep it on desktop only (desktop stays unchanged). */}
-      {!mobile && (
+      {app ? (
+        <button
+          type="button"
+          onClick={startVoiceSearch}
+          aria-label={listening ? 'Listening for voice search' : 'Search by voice'}
+          aria-pressed={listening}
+          className={`absolute right-[5px] top-[5px] flex size-[32px] items-center justify-center rounded-full text-white ${listening ? 'animate-pulse bg-[#e11d48]' : 'bg-brand'}`}
+        >
+          <Mic aria-hidden="true" className="size-[18px]" strokeWidth={2.2} />
+        </button>
+      ) : !mobile ? (
         <button
           type="button"
           onClick={startVoiceSearch}
@@ -148,7 +170,7 @@ export function SearchBar({ id, className = '', size = 'desktop' }: SearchBarPro
         >
           <Mic aria-hidden="true" className="size-[20px]" strokeWidth={2} />
         </button>
-      )}
+      ) : null}
       {open ? (
         <SearchSuggestPanel
           query={value}
