@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: 'Coupons - You Mart' };
 export default function CouponsPage() {
   return (
     <AccountShell active="coupons">
-      <h1 className="mb-[16px] font-ui text-[22px] font-semibold text-heading">Coupons</h1>
+      <h1 className="mb-[16px] hidden font-ui text-[22px] font-semibold text-heading lg:block">Coupons</h1>
       <CouponsView />
     </AccountShell>
   );

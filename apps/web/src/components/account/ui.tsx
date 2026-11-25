@@ -28,9 +28,10 @@ export function PageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <header className="mb-[20px] flex flex-wrap items-end justify-between gap-[12px]">
+    <header className="mb-[20px] flex flex-wrap items-end justify-between gap-[12px] [.ym-account_&]:mb-[14px]">
       <div>
-        <h1 className="font-ui text-[26px] font-semibold leading-[1.25] text-heading">{title}</h1>
+        {/* Inside an account screen on phones the app header already shows the title. */}
+        <h1 className="font-ui text-[26px] font-semibold leading-[1.25] text-heading [.ym-account_&]:hidden lg:[.ym-account_&]:block">{title}</h1>
         {subtitle ? (
           <p className="mt-[4px] font-ui text-[14.5px] leading-[1.5] text-ink-muted">{subtitle}</p>
         ) : null}

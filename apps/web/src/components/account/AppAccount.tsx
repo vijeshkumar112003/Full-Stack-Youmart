@@ -66,7 +66,7 @@ interface Item {
 const REMINDERS: Item[] = [
   { icon: AlarmClock, label: 'Remind me to buy', tint: 'amber', href: ROUTES.reminders, auth: true },
   { icon: Bell, label: 'Alerts', tint: 'blue', href: ROUTES.notifications, auth: true },
-  { icon: SlidersHorizontal, label: 'Notification settings', tint: 'violet', href: ROUTES.orderNotifications, auth: true },
+  { icon: SlidersHorizontal, label: 'Notification settings', tint: 'violet', href: `${ROUTES.notifications}?tab=settings`, auth: true },
 ];
 const ACTIVITY: Item[] = [
   { icon: Gift, label: 'Refer & Earn', tint: 'violet', href: ROUTES.refer },

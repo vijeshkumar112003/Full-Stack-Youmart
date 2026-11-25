@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { SiteHeader } from '@/components/layout/SiteHeader';
+import { PhoneScreenHeader } from '@/components/layout/PhoneScreenHeader';
 import { WelcomeBar } from '@/components/layout/WelcomeBar';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { SiteFooter } from '@/components/layout/SiteFooter';
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <StoreChrome>
           <SiteHeader />
+          <PhoneScreenHeader />
           <WelcomeBar />
         </StoreChrome>
         <main id="content">{children}</main>

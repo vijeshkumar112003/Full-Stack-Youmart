@@ -16,7 +16,7 @@ export function generateMetadata({ params }: OrderPageProps): Metadata {
 export default function OrderPage({ params }: OrderPageProps) {
   return (
     <RequireAuth>
-      <AccountShell active="orders">
+      <AccountShell active="orders" title="Order details" backHref="/account/orders">
         <OrderDetail orderNumber={decodeURIComponent(params.orderNumber)} />
       </AccountShell>
     </RequireAuth>

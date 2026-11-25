@@ -12,6 +12,7 @@ import { CartCountBadge, cartLinkLabel } from '@/components/cart/CartCountBadge'
 import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { DeliveryBar } from './DeliveryBar';
+import { hidesShopHeader } from '@/lib/phone-screens';
 import { FaMapMarkerAlt, FaUser, FaWhatsapp } from '@/components/ui/FaIcons';
 
 interface DesktopAction {
@@ -97,12 +98,10 @@ function AppTile({
   );
 }
 
-// Phone screens that are full-screen in the app (their own header), so no shop header above them.
-const FULL_SCREEN = [/^\/product\//, /^\/account\/?$/, /^\/ask(\/|$)/, /^\/scan\/?$/, /^\/qr-login\/?$/];
 
 export function SiteHeader() {
   const pathname = usePathname() ?? '/';
-  const fullScreen = FULL_SCREEN.some((re) => re.test(pathname));
+  const fullScreen = hidesShopHeader(pathname);
   const session = useSession();
   const cartCount = useCartCount();
   const wishlistCount = useWishlistCount();

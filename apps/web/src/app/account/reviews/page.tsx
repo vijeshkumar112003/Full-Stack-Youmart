@@ -9,7 +9,7 @@ export default function MyReviewsPage() {
   return (
     <RequireAuth>
       <AccountShell active="reviews">
-        <h1 className="mb-[16px] font-ui text-[22px] font-semibold text-heading">My reviews</h1>
+        <h1 className="mb-[16px] hidden font-ui text-[22px] font-semibold text-heading lg:block">My reviews</h1>
         <MyReviewsView />
       </AccountShell>
     </RequireAuth>

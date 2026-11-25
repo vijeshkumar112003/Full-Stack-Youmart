@@ -120,6 +120,10 @@ function NotificationSettingsPanel() {
 export function NotificationsPageView() {
   const session = useSession();
   const [tab, setTab] = useState<'inbox' | 'settings'>('inbox');
+  // ?tab=settings (the Account screen's "Notification settings") opens that tab.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('tab') === 'settings') setTab('settings');
+  }, []);
   const signedIn = session.status === 'authenticated';
   return (
     <>

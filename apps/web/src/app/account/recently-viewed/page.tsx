@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: 'Recently viewed - You Mart' };
 export default function RecentlyViewedPage() {
   return (
     <AccountShell active="recent">
-      <h1 className="mb-[16px] font-ui text-[22px] font-semibold text-heading">Recently viewed</h1>
+      <h1 className="mb-[16px] hidden font-ui text-[22px] font-semibold text-heading lg:block">Recently viewed</h1>
       <RecentlyViewedView />
     </AccountShell>
   );

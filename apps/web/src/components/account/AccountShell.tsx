@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {
+  ChevronLeft,
   AlarmClock,
   Bell,
   Megaphone,
@@ -20,7 +21,7 @@ import {
   UserRound,
   Wallet,
 } from 'lucide-react';
-import { ACCOUNT_NAV, type AccountNavGroup, type AccountSection } from '@youmart/shared-client';
+import { ACCOUNT_NAV, ROUTES, type AccountNavGroup, type AccountSection } from '@youmart/shared-client';
 import { LogoutButton } from './LogoutButton';
 
 const ICONS: Record<AccountSection, typeof House> = {
@@ -50,6 +51,9 @@ const GROUPS: AccountNavGroup[] = ['Shopping', 'Money', 'Account', 'Support'];
 interface AccountShellProps {
   active: AccountSection;
   children: React.ReactNode;
+  /** Phone screen title (defaults to the menu label) and where its back button goes. */
+  title?: string;
+  backHref?: string;
 }
 
 const LINK =
@@ -57,12 +61,25 @@ const LINK =
 
 // Desktop account layout: a sticky side menu grouped by what it's for (Shopping, Money, Account,
 // Support) as a 27% column from 922px, stacked full-width above the content below it.
-export function AccountShell({ active, children }: AccountShellProps) {
+export function AccountShell({ active, children, title, backHref = ROUTES.account }: AccountShellProps) {
+  const label = title ?? ACCOUNT_NAV.find((item) => item.key === active)?.label ?? 'My account';
   return (
-    <div className="mx-auto max-w-[1240px] px-[20px] py-[20px] lg:pb-[64px] lg:pt-[56px] min-[922px]:flex min-[922px]:items-start min-[922px]:justify-between">
+    <>
+    {/* Phones / tablets: the app's inner-screen header (back + title); no side menu. */}
+    <div className="sticky top-0 z-30 flex h-[60px] items-center justify-center bg-page/95 px-[16px] backdrop-blur lg:hidden">
+      <Link
+        href={backHref}
+        aria-label="Back"
+        className="absolute left-[16px] flex size-[44px] items-center justify-center rounded-full bg-white shadow-[0_4px_12px_rgba(15,23,42,0.12)]"
+      >
+        <ChevronLeft aria-hidden="true" className="size-[22px] text-heading" />
+      </Link>
+      <h1 className="max-w-[calc(100%-120px)] truncate font-ui text-[17px] font-bold text-heading">{label}</h1>
+    </div>
+    <div className="mx-auto max-w-[1240px] px-[16px] pb-[24px] pt-[8px] lg:flex lg:items-start lg:justify-between lg:px-[20px] lg:pb-[64px] lg:pt-[56px]">
       <nav
         aria-label="Account pages"
-        className="mb-[20px] rounded-[14px] border border-catalog-rule bg-white p-[12px] shadow-account-nav min-[922px]:sticky min-[922px]:top-[96px] min-[922px]:w-[27%]"
+        className="mb-[20px] hidden rounded-[14px] border border-catalog-rule bg-white p-[12px] shadow-account-nav lg:sticky lg:top-[96px] lg:block lg:w-[27%]"
       >
         {GROUPS.map((group) => (
           <div key={group} className="mb-[6px] border-b border-catalog-rule pb-[8px] last:mb-0 last:border-0 last:pb-0">
@@ -106,7 +123,8 @@ export function AccountShell({ active, children }: AccountShellProps) {
           </div>
         ))}
       </nav>
-      <div className="min-w-0 min-[922px]:w-[70%]">{children}</div>
+      <div className="ym-account min-w-0 lg:w-[70%]">{children}</div>
     </div>
+    </>
   );
 }
