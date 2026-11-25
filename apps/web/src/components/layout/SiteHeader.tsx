@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Bell, Download, Headset, Heart, Package, PackageSearch, QrCode, ShoppingCart } from 'lucide-react';
 import { BUSINESS, ROUTES } from '@youmart/shared-client';
 import { useSession } from '@/lib/session';
@@ -96,7 +97,12 @@ function AppTile({
   );
 }
 
+// Phone screens that are full-screen in the app (their own header), so no shop header above them.
+const FULL_SCREEN = [/^\/product\//, /^\/account\/?$/, /^\/ask(\/|$)/, /^\/scan\/?$/, /^\/qr-login\/?$/];
+
 export function SiteHeader() {
+  const pathname = usePathname() ?? '/';
+  const fullScreen = FULL_SCREEN.some((re) => re.test(pathname));
   const session = useSession();
   const cartCount = useCartCount();
   const wishlistCount = useWishlistCount();
@@ -110,7 +116,7 @@ export function SiteHeader() {
     <header className="bg-white">
       {/* Phone + tablet (< 1025px): the app's header - logo, QR Login / Track Order / Alerts /
           Customer Care tiles, "Deliver to" and the search bar (camera + voice). */}
-      <div className="flex flex-col px-[16px] pb-[12px] pt-[8px] lg:hidden">
+      <div className={`flex-col px-[16px] pb-[12px] pt-[8px] lg:hidden ${fullScreen ? 'hidden' : 'flex'}`}>
         <div className="flex items-center justify-between">
           <Logo variant="mobile" className="w-[132px]" priority />
           <nav aria-label="Quick links" className="ml-auto flex items-start gap-[6px]">

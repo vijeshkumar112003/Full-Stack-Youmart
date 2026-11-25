@@ -12,6 +12,7 @@ import { CheckoutSteps } from '@/components/listing/CheckoutSteps';
 import { FilterDrawer } from '@/components/listing/FilterDrawer';
 import { InfiniteProductGrid } from '@/components/listing/InfiniteProductGrid';
 import { RelatedCategories } from '@/components/listing/RelatedCategories';
+import { AppCategoryLayout } from '@/components/category/AppCategoryLayout';
 import { getCategoryListing, listMoreCategoryProducts, resolveCategoryPath } from '@/lib/catalog';
 import { categoryBarMains, categoryContext } from '@/lib/category-taxonomy';
 
@@ -48,7 +49,36 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   return (
     <>
       <CategoryBar mains={categoryBarMains()} activeSlug={context?.main.slug} />
-      <div className="mt-[10px] flex pr-[20px] lg:mx-auto lg:mt-[14px] lg:max-w-[1440px] lg:gap-[24px] lg:px-[12px]">
+      {/* Phones / tablets: the app's category screen. */}
+      <div className="lg:hidden">
+        <AppCategoryLayout
+          main={context?.main ?? null}
+          title={title}
+          basePath={basePath}
+          query={query}
+          brands={brandFilter?.values ?? []}
+          filterButton={
+            <FilterDrawer key={`m-${listingQueryString(query)}`} basePath={basePath} query={query} filters={listing.filters} />
+          }
+        >
+          {listing.products.length > 0 ? (
+            <InfiniteProductGrid
+              initial={listing.products}
+              total={listing.total}
+              loadMore={loadMore}
+              card="mini"
+              gridClassName="mb-[16px] grid grid-cols-2 gap-[8px] md:grid-cols-3"
+            />
+          ) : (
+            <div className="flex flex-col items-center gap-[8px] py-[48px] text-center">
+              <span className="flex size-[60px] items-center justify-center rounded-full bg-brand-popup-bg font-ui text-[26px]">📦</span>
+              <p className="font-ui text-[16px] font-bold text-heading">No products here yet</p>
+              <p className="px-[12px] text-[13px] text-ink-muted">Try another category or clear the filters.</p>
+            </div>
+          )}
+        </AppCategoryLayout>
+      </div>
+      <div className="mt-[10px] hidden pr-[20px] lg:mx-auto lg:flex lg:mt-[14px] lg:max-w-[1440px] lg:gap-[24px] lg:px-[12px]">
         {/* Below 1025px the live sidebar stays; desktop has the redesign's taxonomy sidebar. */}
         <div className="contents lg:hidden">
           <CategorySidebar category={node.root} activeSlug={path[1]} />

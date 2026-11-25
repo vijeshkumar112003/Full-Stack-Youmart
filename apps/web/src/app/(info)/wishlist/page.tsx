@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ROUTES } from '@youmart/shared-client';
 import { TEXT_LINK } from '@/components/account/formStyles';
 import { WishlistTable } from '@/components/wishlist/WishlistTable';
+import { AppFavourites } from '@/components/wishlist/AppFavourites';
 
 export const metadata: Metadata = { title: 'Wishlist - You Mart' };
 
@@ -10,7 +11,12 @@ export const metadata: Metadata = { title: 'Wishlist - You Mart' };
 // on login - the same pattern as the cart (lib/wishlist.ts).
 export default function WishlistPage() {
   return (
-    <div className="mx-auto max-w-[1040px] px-[20px] py-[30px] lg:mb-[64px] lg:mt-[64px] lg:py-0">
+    <>
+    {/* Phones / tablets: the app's Favourites tab. */}
+    <div className="lg:hidden">
+      <AppFavourites />
+    </div>
+    <div className="mx-auto hidden max-w-[1040px] px-[20px] py-[30px] lg:mb-[64px] lg:mt-[64px] lg:block lg:py-0">
       <h1 className="mb-[20px] font-ui text-[26px] font-semibold leading-[1.3] text-heading lg:text-[34px]">
         My wishlist
       </h1>
@@ -21,5 +27,6 @@ export default function WishlistPage() {
         </Link>
       </p>
     </div>
+    </>
   );
 }

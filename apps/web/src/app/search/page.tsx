@@ -83,7 +83,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   initial={products}
                   total={total}
                   loadMore={loadMore}
-                  gridClassName="grid grid-cols-2 gap-x-[10px] md:grid-cols-3 md:gap-x-[16px] lg:grid-cols-4"
+                  card="responsive"
+                  gridClassName="grid grid-cols-2 gap-[8px] md:grid-cols-3 lg:grid-cols-4 lg:gap-x-[16px] lg:gap-y-0"
                   priorityCount={4}
                 />
               ) : (

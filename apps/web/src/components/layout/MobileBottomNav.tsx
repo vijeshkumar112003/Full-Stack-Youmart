@@ -59,6 +59,8 @@ export function MobileBottomNav() {
   const pathname = usePathname() ?? '/';
   const cartCount = useCartCount();
   const askActive = pathname.startsWith('/ask') || pathname.startsWith('/youfind');
+  // Product pages have the app's Add to Cart / Buy Now bar here instead of the tabs.
+  if (pathname.startsWith('/product/')) return null;
 
   return (
     <nav

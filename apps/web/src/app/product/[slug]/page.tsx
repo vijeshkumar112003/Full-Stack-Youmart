@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ProductTopBar } from '@/components/product/ProductTopBar';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -106,6 +107,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <ProductViewTracker productId={product.id} />
       <CategoryBar mains={categoryBarMains()} />
       <div className="mx-auto mt-[10px] max-w-[1240px] px-[20px] lg:my-[64px]">
+        <ProductTopBar title={product.title} />
         <ProductHero product={product} reviewCount={reviewCount}>
             <div className="mt-[16px]">
               <ShopWithAssurance />

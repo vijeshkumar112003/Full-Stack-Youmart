@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, ShoppingBag, ShoppingCart } from 'lucide-react';
 import type { CartProduct } from '@youmart/shared-client';
 import { buyNowLine, useAddToCart, useCart } from '@/lib/cart';
 import { RemindButton } from './RemindButton';
@@ -120,6 +120,31 @@ export function PurchasePanel({ product, title }: PurchasePanelProps) {
       >
         Buy Now
       </button>
+      {/* Phones: the app's sticky bottom bar - Add to Cart (or Go to Cart) | Buy Now. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 flex gap-[10px] border-t border-[#e6ecf5] bg-white px-[12px] pb-[calc(8px+env(safe-area-inset-bottom))] pt-[8px] shadow-[0_-6px_18px_rgba(15,23,42,0.08)] lg:hidden">
+        {inCart ? (
+          <Link href="/cart" className="flex h-[48px] flex-1 items-center justify-center gap-[6px] rounded-[12px] bg-[#16a34a] font-ui text-[15px] font-bold text-white">
+            <CheckCircle2 aria-hidden="true" className="size-[18px]" /> Go to Cart
+          </Link>
+        ) : (
+          <button
+            type="button"
+            disabled={!product || busy !== null}
+            onClick={() => void run('add')}
+            className="flex h-[48px] flex-1 items-center justify-center gap-[6px] rounded-[12px] bg-brand font-ui text-[15px] font-bold text-white disabled:opacity-60"
+          >
+            <ShoppingCart aria-hidden="true" className="size-[18px]" /> {busy === 'add' ? 'Adding…' : 'Add to Cart'}
+          </button>
+        )}
+        <button
+          type="button"
+          disabled={!product || busy !== null}
+          onClick={() => void run('buy')}
+          className="flex h-[48px] flex-1 items-center justify-center gap-[6px] rounded-[12px] bg-[#ffd60a] font-ui text-[15px] font-bold text-[#1f1300] disabled:opacity-60"
+        >
+          <ShoppingBag aria-hidden="true" className="size-[18px]" /> Buy Now
+        </button>
+      </div>
       {product ? (
         <div className="mb-[10px]">
           <RemindButton product={product} />

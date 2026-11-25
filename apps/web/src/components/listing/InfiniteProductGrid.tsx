@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ProductCardData } from '@youmart/shared-client';
 import { ProductCard } from '@/components/product/ProductCard';
+import { MiniProductCard } from '@/components/mhome/MiniProductCard';
 
 /**
  * Infinite-scroll product grid: server-renders the first page, then appends more via a server
@@ -14,6 +15,7 @@ export function InfiniteProductGrid({
   loadMore,
   gridClassName,
   priorityCount = 0,
+  card = 'listing',
 }: {
   initial: ProductCardData[];
   total: number;
@@ -21,6 +23,8 @@ export function InfiniteProductGrid({
   loadMore: (page: number) => Promise<ProductCardData[]>;
   gridClassName: string;
   priorityCount?: number;
+  /** 'mini' = the app's compact card with Add / Buy (phone layouts). */
+  card?: 'listing' | 'mini' | 'responsive';
 }) {
   const [products, setProducts] = useState(initial);
   const [page, setPage] = useState(1);
@@ -65,8 +69,21 @@ export function InfiniteProductGrid({
     <>
       <ul className={gridClassName}>
         {products.map((product, i) => (
-          <li key={product.id} className="mb-[10px]">
-            <ProductCard product={product} variant="listing" priority={i < priorityCount} />
+          <li key={product.id} className={card === 'mini' ? '' : card === 'responsive' ? 'lg:mb-[10px]' : 'mb-[10px]'}>
+            {card === 'mini' ? (
+              <MiniProductCard product={product} />
+            ) : card === 'responsive' ? (
+              <>
+                <div className="h-full lg:hidden">
+                  <MiniProductCard product={product} />
+                </div>
+                <div className="hidden h-full lg:block">
+                  <ProductCard product={product} variant="listing" priority={i < priorityCount} />
+                </div>
+              </>
+            ) : (
+              <ProductCard product={product} variant="listing" priority={i < priorityCount} />
+            )}
           </li>
         ))}
       </ul>

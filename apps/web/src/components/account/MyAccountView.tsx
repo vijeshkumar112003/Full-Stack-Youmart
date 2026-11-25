@@ -6,6 +6,8 @@ import { Clock, Heart, LifeBuoy, RotateCcw, ShoppingBasket, Star, TicketPercent,
 import { ROUTES, authUserLabel } from '@youmart/shared-client';
 import { reloadUser, useSession } from '@/lib/session';
 import { AccountShell } from './AccountShell';
+import { AppAccount } from './AppAccount';
+import { AppSignIn } from './AppSignIn';
 import { LogoutButton } from './LogoutButton';
 import { OrdersList } from './OrdersList';
 import { LoginMethods } from './LoginMethods';
@@ -21,10 +23,21 @@ export function MyAccountView({ returnTo }: { returnTo?: string }) {
   if (session.status === 'loading') {
     return <div aria-busy="true" className="min-h-[480px]" />;
   }
-  if (session.status === 'anonymous') {
-    return <LoginView returnTo={returnTo} />;
-  }
-  return <Dashboard label={authUserLabel(session.user)} />;
+  // Phones / tablets: the app's Account tab; "Sign in" (any returnTo) opens the app's sign-in.
+  const phone =
+    session.status === 'anonymous' && returnTo ? <AppSignIn returnTo={returnTo} /> : <AppAccount />;
+  return (
+    <>
+      <div className="lg:hidden">{phone}</div>
+      <div className="hidden lg:block">
+        {session.status === 'anonymous' ? (
+          <LoginView returnTo={returnTo} />
+        ) : (
+          <Dashboard label={authUserLabel(session.user)} />
+        )}
+      </div>
+    </>
+  );
 }
 
 function Dashboard({ label }: { label: string }) {
