@@ -21,10 +21,12 @@ export function LogoutButton({
       disabled={pending}
       className={className}
       onClick={() =>
-        startTransition(async () => {
-          // The local session is cleared even if the network call fails.
-          await logout().catch(() => undefined);
-          router.replace(ROUTES.account);
+        startTransition(() => {
+          void (async () => {
+            // The local session is cleared even if the network call fails.
+            await logout().catch(() => undefined);
+            router.replace(ROUTES.account);
+          })();
         })
       }
     >

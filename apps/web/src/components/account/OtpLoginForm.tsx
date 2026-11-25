@@ -69,15 +69,17 @@ export function OtpLoginForm({ mode, returnTo, bare = false }: OtpLoginFormProps
 
   const send = (target: LoginIdentifier) => {
     setError(null);
-    startTransition(async () => {
-      try {
-        await api.auth.requestOtp(target.value);
-        setSentTo(target);
-        setCode('');
-        setCooldown(OTP_RESEND_SECONDS);
-      } catch (err) {
-        setError(otpErrorMessage(err, 'request'));
-      }
+    startTransition(() => {
+      void (async () => {
+        try {
+          await api.auth.requestOtp(target.value);
+          setSentTo(target);
+          setCode('');
+          setCooldown(OTP_RESEND_SECONDS);
+        } catch (err) {
+          setError(otpErrorMessage(err, 'request'));
+        }
+      })();
     });
   };
 
@@ -97,13 +99,15 @@ export function OtpLoginForm({ mode, returnTo, bare = false }: OtpLoginFormProps
       return;
     }
     setError(null);
-    startTransition(async () => {
-      try {
-        await loginWithOtp(sentTo.value, code);
-        router.replace(safeReturnTo(returnTo));
-      } catch (err) {
-        setError(otpErrorMessage(err, 'verify'));
-      }
+    startTransition(() => {
+      void (async () => {
+        try {
+          await loginWithOtp(sentTo.value, code);
+          router.replace(safeReturnTo(returnTo));
+        } catch (err) {
+          setError(otpErrorMessage(err, 'verify'));
+        }
+      })();
     });
   };
 

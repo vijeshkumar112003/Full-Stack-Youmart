@@ -35,6 +35,7 @@ jobs:
     runs-on: ${{ vars.BUILD_RUNNER || 'ubuntu-24.04-arm' }}
     timeout-minutes: 60
     strategy:
+      fail-fast: false
       matrix:
         include:
           - name: backend

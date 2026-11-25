@@ -42,13 +42,13 @@ export function AdminDashboard() {
           {can(session, 'support.manage') && (
             <Link href="/admin/support" className="rounded-[16px] border border-[#e4e9f2] bg-white p-[22px] hover:border-[#0142aa]">
               <p className="text-[16px] font-semibold text-[#0b1b3f]">Support inbox →</p>
-              <p className="text-[13.5px] text-[#5d6b85]">Answer customers' help requests.</p>
+              <p className="text-[13.5px] text-[#5d6b85]">Answer customers&apos; help requests.</p>
             </Link>
           )}
           {can(session, 'customers.view') && (
             <Link href="/admin/customers" className="rounded-[16px] border border-[#e4e9f2] bg-white p-[22px] hover:border-[#0142aa]">
               <p className="text-[16px] font-semibold text-[#0b1b3f]">Customers →</p>
-              <p className="text-[13.5px] text-[#5d6b85]">Look up a customer's account.</p>
+              <p className="text-[13.5px] text-[#5d6b85]">Look up a customer&apos;s account.</p>
             </Link>
           )}
         </div>
