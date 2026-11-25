@@ -1,7 +1,7 @@
 'use client';
 
 import { useId, useRef } from 'react';
-import { X } from 'lucide-react';
+import { X, type LucideIcon } from 'lucide-react';
 import { useModal } from '@/lib/useModal';
 
 // Desktop account building blocks (wallet, returns, help, devices, privacy, order page): one look
@@ -96,7 +96,7 @@ export function EmptyState({
   children,
   action,
 }: {
-  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' }>;
+  icon: LucideIcon;
   title: string;
   children?: React.ReactNode;
   action?: React.ReactNode;

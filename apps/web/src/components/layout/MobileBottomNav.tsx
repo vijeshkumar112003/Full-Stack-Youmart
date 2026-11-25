@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bookmark, Download, House, ShoppingCart, User } from 'lucide-react';
+import { Bookmark, Download, House, ShoppingCart, User, type LucideIcon } from 'lucide-react';
 import { BUSINESS, ROUTES } from '@youmart/shared-client';
 import { CartCountBadge, cartLinkLabel } from '@/components/cart/CartCountBadge';
 import { useCartCount } from '@/lib/cart';
@@ -10,7 +10,7 @@ import { useCartCount } from '@/lib/cart';
 interface Tab {
   href: string;
   label: string;
-  icon: React.ComponentType<{ className?: string; fill?: string; strokeWidth?: number; 'aria-hidden'?: boolean | 'true' }>;
+  icon: LucideIcon;
   filled: boolean;
 }
 
