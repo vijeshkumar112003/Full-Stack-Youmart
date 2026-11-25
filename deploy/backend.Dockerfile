@@ -37,7 +37,8 @@ RUN corepack enable && corepack prepare pnpm@9.15.0 --activate \
 COPY --from=build /app /app
 
 # Runs as the image's unprivileged `node` user. /app/.env is mounted read-only by compose.
-RUN mkdir -p /app/storage && chown -R node:node /app/storage
+# Prisma fetches its migration engine on first use into @prisma/engines - let the node user write it.
+RUN mkdir -p /app/storage && chown -R node:node /app/storage  && for d in /app/node_modules/.pnpm/@prisma+engines@*/node_modules/@prisma/engines; do chown -R node:node "$d"; done
 USER node
 
 ENTRYPOINT ["/usr/bin/tini", "--"]

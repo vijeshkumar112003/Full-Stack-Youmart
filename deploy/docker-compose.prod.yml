@@ -81,7 +81,8 @@ services:
     restart: 'no'
     profiles: ['tools']
     working_dir: /app/packages/db
-    command: ['pnpm', 'exec', 'prisma', 'migrate', 'deploy']
+    # the prisma CLI directly (no pnpm/corepack download at run time)
+    command: ['node_modules/.bin/prisma', 'migrate', 'deploy']
 
   # --- backend ----------------------------------------------------------------------------------
   gateway:

@@ -26,6 +26,7 @@ grep -E '^[A-Z_]*DATABASE_URL=postgresql://' .env | while IFS='=' read -r key ur
   fi
   docker compose -f docker-compose.prod.yml --env-file .env exec -T postgres \
     psql -v ON_ERROR_STOP=1 -q -U "$ADMIN_USER" -d "$DB_NAME" \
-    -c "DO \$\$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${user}') THEN ALTER ROLE \"${user}\" PASSWORD '${pass}'; END IF; END \$\$;"
+    -c "DO \$\$ BEGIN IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${user}') THEN ALTER ROLE \"${user}\" PASSWORD '${pass}'; END IF; END \$\$;" \
+    < /dev/null  # without this, docker exec reads (and swallows) the rest of the loop's input
   echo "password set for ${user}"
 done
