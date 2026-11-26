@@ -110,59 +110,91 @@ function Chip({ icon: Icon, children }: { icon: typeof Zap; children: React.Reac
 
 export function DeskRailPanels({ rails }: { rails: ProductRailSlider[] }) {
   const panels = rails.filter((r) => r.products.length > 0);
+  const [active, setActive] = useState(0);
   const row = useRow();
-  if (panels.length === 0) return null;
+  // A new collection starts at its first product.
+  useEffect(() => {
+    row.ref.current?.scrollTo({ left: 0 });
+    row.onScroll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+  const rail = panels[active] ?? panels[0];
+  if (!rail) return null;
+  const t = RAIL_THEME[rail.key] ?? RAIL_THEME.explore;
+  const Icon = t.icon;
+  const href = `/shop?orderby=${RAIL_SORT[rail.key] ?? 'date'}`;
   return (
     <section aria-label="Handpicked for you" className={`${DESK} mt-[48px]`}>
-      <Head title="Handpicked for you" sub="Deals, trends and picks chosen for you" right={<Arrows edges={row.edges} page={row.page} />} />
-      <div ref={row.ref} onScroll={row.onScroll} className={`${ROW} pb-[8px]`}>
-        {panels.map((rail) => {
-          const t = RAIL_THEME[rail.key] ?? RAIL_THEME.explore;
-          const Icon = t.icon;
-          const href = `/shop?orderby=${RAIL_SORT[rail.key] ?? 'date'}`;
-          return (
-            <div
-              key={rail.key}
-              style={{ backgroundImage: t.gradient }}
-              className="relative flex w-[calc((100%-40px)/3)] min-w-[380px] shrink-0 snap-start flex-col gap-[14px] overflow-hidden rounded-[26px] p-[18px] shadow-[0_14px_30px_rgba(15,23,42,0.18)]"
-            >
-              <span aria-hidden="true" className="pointer-events-none absolute -right-[60px] -top-[80px] size-[220px] rounded-full bg-white/[0.09]" />
-              <span aria-hidden="true" className="pointer-events-none absolute -bottom-[70px] -left-[50px] size-[160px] rounded-full bg-white/[0.09]" />
-              <div className="relative flex items-center gap-[12px]">
-                <span className="flex size-[42px] shrink-0 items-center justify-center rounded-[14px] border border-white/25 bg-white/[0.18]">
-                  <Icon aria-hidden="true" className="size-[20px] text-white" />
+      <Head title="Handpicked for you" sub="Deals, trends and picks chosen for you" />
+      <div className="flex gap-[20px]">
+        {/* Collections: the app's five panels as a vertical picker, each in its own colour. */}
+        <div role="tablist" aria-label="Collections" aria-orientation="vertical" className="flex w-[290px] shrink-0 flex-col gap-[10px] self-stretch">
+          {panels.map((r, i) => {
+            const rt = RAIL_THEME[r.key] ?? RAIL_THEME.explore;
+            const RIcon = rt.icon;
+            const on = i === active;
+            return (
+              <button
+                key={r.key}
+                type="button"
+                role="tab"
+                aria-selected={on}
+                onClick={() => setActive(i)}
+                onMouseEnter={() => setActive(i)}
+                style={on ? { backgroundImage: rt.gradient } : undefined}
+                className={`group relative flex flex-1 items-center gap-[12px] overflow-hidden rounded-[18px] border px-[14px] py-[10px] text-left transition-all duration-200 ${
+                  on
+                    ? 'border-transparent shadow-[0_10px_22px_rgba(15,23,42,0.2)]'
+                    : 'border-brand-popup-border bg-white hover:border-brand hover:shadow-[0_6px_16px_rgba(1,66,170,0.12)]'
+                }`}
+              >
+                {on ? <span aria-hidden="true" className="pointer-events-none absolute -right-[30px] -top-[40px] size-[110px] rounded-full bg-white/10" /> : null}
+                <span
+                  style={on ? undefined : { backgroundImage: rt.gradient }}
+                  className={`relative flex size-[44px] shrink-0 items-center justify-center rounded-[14px] ${on ? 'border border-white/25 bg-white/[0.18]' : ''}`}
+                >
+                  <RIcon aria-hidden="true" className="size-[21px] text-white" />
                 </span>
-                <Link href={href} className="min-w-0 flex-1">
-                  <span className="block truncate font-ui text-[19px] font-bold text-white">{rail.heading}</span>
-                  <span className="block truncate font-ui text-[13px] font-medium text-white/80">{t.tagline}</span>
-                </Link>
-                <Link href={href} className="flex h-[32px] shrink-0 items-center gap-[2px] rounded-full border border-white/30 bg-white/[0.18] pl-[12px] pr-[8px] font-ui text-[13px] font-bold text-white transition-colors hover:bg-white hover:text-heading">
-                  View all <ChevronRight aria-hidden="true" className="size-[15px]" />
-                </Link>
-              </div>
-              <div className="relative grid grid-cols-2 gap-[12px]">
-                {rail.products.slice(0, 4).map((p) => {
-                  const off = discountPercent(p.mrp, p.sellingPrice);
-                  return (
-                    <Link key={p.id} href={p.href} className="group flex flex-col gap-[5px] rounded-[18px] bg-white p-[8px] pb-[11px] shadow-[0_3px_8px_rgba(0,0,0,0.12)] transition-transform duration-200 hover:-translate-y-[3px]">
-                      <span className="relative block aspect-square overflow-hidden rounded-[13px] bg-[#f4f7fd]">
-                        <Image src={p.image} alt="" fill sizes="200px" unoptimized={skipImageOptimizer(p.image)} className="object-contain p-[6px] transition-transform duration-300 group-hover:scale-105" />
-                        {off > 0 ? (
-                          <span className="absolute left-[7px] top-[7px] rounded-[7px] bg-[#e11d48] px-[7px] py-[2px] font-ui text-[11px] font-bold text-white">{off}% OFF</span>
-                        ) : null}
-                      </span>
-                      <span className="truncate px-[3px] font-ui text-[13.5px] font-medium text-black">{p.title}</span>
-                      <span className="flex items-baseline gap-[6px] px-[3px]">
-                        <span className="font-ui text-[16px] font-bold text-heading">{shortMoney(p.sellingPrice)}</span>
-                        {off > 0 ? <span className="text-[12px] text-ink-muted line-through">{shortMoney(p.mrp)}</span> : null}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
+                <span className="relative min-w-0 flex-1">
+                  <span className={`block truncate font-ui text-[15.5px] font-bold ${on ? 'text-white' : 'text-heading'}`}>{r.heading}</span>
+                  <span className={`block truncate font-ui text-[12.5px] font-medium ${on ? 'text-white/80' : 'text-ink-muted'}`}>{rt.tagline}</span>
+                </span>
+                <ChevronRight aria-hidden="true" className={`relative size-[18px] shrink-0 transition-transform group-hover:translate-x-[2px] ${on ? 'text-white' : 'text-brand'}`} />
+              </button>
+            );
+          })}
+        </div>
+
+        {/* The picked collection: a gradient banner, then its products five at a time. */}
+        <div role="tabpanel" aria-label={rail.heading} className="min-w-0 flex-1 overflow-hidden rounded-[26px] border border-brand-popup-border bg-white shadow-[0_10px_30px_rgba(1,66,170,0.1)]">
+          <div style={{ backgroundImage: t.gradient }} className="relative flex items-center gap-[16px] overflow-hidden px-[24px] py-[18px]">
+            <span aria-hidden="true" className="pointer-events-none absolute -right-[40px] -top-[90px] size-[240px] rounded-full bg-white/[0.09]" />
+            <span aria-hidden="true" className="pointer-events-none absolute -bottom-[80px] right-[220px] size-[160px] rounded-full bg-white/[0.07]" />
+            <span className="relative flex size-[52px] shrink-0 items-center justify-center rounded-[16px] border border-white/25 bg-white/[0.18]">
+              <Icon aria-hidden="true" className="size-[26px] text-white" />
+            </span>
+            <div className="relative min-w-0">
+              <h3 className="truncate font-ui text-[24px] font-bold leading-[30px] text-white">{rail.heading}</h3>
+              <p className="font-ui text-[14px] font-medium text-white/80">{t.tagline}</p>
             </div>
-          );
-        })}
+            {rail.badge ? (
+              <span className="relative ml-[8px] shrink-0 rounded-[10px] bg-[#ffe500] px-[12px] py-[5px] font-ui text-[13px] font-bold text-[#1f1300]">{rail.badge}</span>
+            ) : null}
+            <div className="relative ml-auto flex shrink-0 items-center gap-[12px]">
+              <Arrows edges={row.edges} page={row.page} tone="dark" />
+              <Link href={href} className="flex h-[40px] items-center gap-[4px] rounded-full bg-white pl-[18px] pr-[12px] font-ui text-[14px] font-bold text-heading transition-transform hover:scale-[1.04]">
+                View all <ChevronRight aria-hidden="true" className="size-[16px]" />
+              </Link>
+            </div>
+          </div>
+          <div ref={row.ref} onScroll={row.onScroll} className={`${ROW} gap-[16px] p-[20px]`}>
+            {rail.products.map((p) => (
+              <div key={p.id} className="w-[calc((100%-64px)/5)] min-w-[190px] shrink-0 snap-start">
+                <MiniProductCard product={p} size="desktop" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
