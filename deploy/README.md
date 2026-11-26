@@ -146,7 +146,9 @@ sudo -u ubuntu docker login ghcr.io -u <github-username>   # paste the token as 
 1. IAM -> Identity providers -> Add -> OpenID Connect: `https://token.actions.githubusercontent.com`,
    audience `sts.amazonaws.com`.
 2. IAM role `youmart-github-deploy`, trusted by that provider, condition
-   `token.actions.githubusercontent.com:sub` = `repo:vijeshkumar112003/Full-Stack-Youmart:environment:production`.
+   `token.actions.githubusercontent.com:sub` = `repo:vijeshkumar112003@361129120/Full-Stack-Youmart@1471750730:environment:production`
+   (GitHub's ID-pinned subject: owner@ownerId/repo@repoId - check it in the deploy job's
+   "Show the GitHub identity sent to AWS" step if the repo ever moves).
    Permissions: `ssm:SendCommand` on instances tagged `Project=youmart` + the custom document
    `YouMart-Deploy` (create it in Systems Manager -> Documents from `deploy/ssm/YouMart-Deploy.json`;
    it can only run `deploy.sh <version>`), and `ssm:GetCommandInvocation`.
