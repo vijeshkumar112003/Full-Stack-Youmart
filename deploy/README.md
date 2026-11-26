@@ -181,11 +181,14 @@ start, health check. Then, on the server:
 ```bash
 cd /opt/youmart
 # image links -> custom domain (dry run first), then the search index rebuilds itself
-docker compose -f docker-compose.prod.yml --env-file .env run --rm -e GATEWAY_URL=http://gateway:4000 \
+docker compose -f docker-compose.prod.yml --env-file .env run --rm -e GATEWAY_URL=http://youmart-gateway-1:4000 \
   gateway node scripts/switch-image-domain.mjs https://img.youmart.in --dry-run
-docker compose -f docker-compose.prod.yml --env-file .env run --rm -e GATEWAY_URL=http://gateway:4000 \
+docker compose -f docker-compose.prod.yml --env-file .env run --rm -e GATEWAY_URL=http://youmart-gateway-1:4000 \
   gateway node scripts/switch-image-domain.mjs https://img.youmart.in
 ```
+(The one-off container is also called "gateway", so the script must reach the running gateway by its
+container name, youmart-gateway-1. If the search rebuild still could not start, re-run with
+`--reindex-only` - or let the nightly 02:00 rebuild pick the new links up.)
 Open https://youmart.in, search, place a small real order and refund it.
 
 ## 12. Go-live checklist

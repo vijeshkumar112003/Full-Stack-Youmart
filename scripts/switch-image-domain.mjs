@@ -7,7 +7,7 @@
 //
 // Reads DATABASE_URL / JWT_PRIVATE_KEY / GATEWAY_URL from the repo-root .env. On the server, run it
 // inside the backend container:
-//   docker compose -f docker-compose.prod.yml run --rm -e GATEWAY_URL=http://gateway:4000 \
+//   docker compose -f docker-compose.prod.yml run --rm -e GATEWAY_URL=http://youmart-gateway-1:4000 \
 //     gateway node scripts/switch-image-domain.mjs https://img.youmart.in
 // Safe to run again: rows already on the new domain no longer match.
 import { createSign } from 'node:crypto';
@@ -21,6 +21,8 @@ const env = process.env;
 
 const target = (process.argv[2] ?? '').replace(/\/+$/, '');
 const dryRun = process.argv.includes('--dry-run');
+// --reindex-only: skip the link update, just rebuild search (e.g. when the rebuild could not start).
+const reindexOnly = process.argv.includes('--reindex-only');
 if (!/^https:\/\/[a-z0-9.-]+$/i.test(target)) {
   console.error('usage: node scripts/switch-image-domain.mjs https://img.example.com [--dry-run]');
   process.exit(1);
@@ -35,8 +37,8 @@ const { rows: hosts } = await db.query(
   `SELECT DISTINCT substring(url from '^https://pub-[a-z0-9]+\\.r2\\.dev') AS host
      FROM catalog.product_image WHERE url LIKE 'https://pub-%.r2.dev/%'`,
 );
-const from = hosts.map((h) => h.host).filter(Boolean);
-if (from.length === 0) {
+const from = reindexOnly ? [] : hosts.map((h) => h.host).filter(Boolean);
+if (from.length === 0 && !reindexOnly) {
   console.log('No r2.dev image links left - nothing to do.');
   await db.end();
   process.exit(0);
@@ -54,6 +56,7 @@ const COLUMNS = [
 ];
 
 let total = 0;
+if (reindexOnly) console.log('--reindex-only: links unchanged, rebuilding search');
 await db.query('BEGIN');
 try {
   for (const host of from) {
