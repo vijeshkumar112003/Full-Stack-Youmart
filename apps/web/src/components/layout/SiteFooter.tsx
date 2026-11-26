@@ -1,183 +1,151 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart } from 'lucide-react';
-import { FOOTER } from '@youmart/shared-client';
-import {
-  FaCopyright,
-  FaFacebook,
-  FaInstagram,
-  FaQuestionCircle,
-  FaShareAlt,
-  FaStore,
-  FaUser,
-  FaYoutube,
-} from '@/components/ui/FaIcons';
+import { ArrowRight, Mail, MapPin, MessageCircle, Phone, Smartphone } from 'lucide-react';
+import { BUSINESS, FOOTER } from '@youmart/shared-client';
+import { FaFacebook, FaInstagram, FaShareAlt, FaYoutube } from '@/components/ui/FaIcons';
+import { PROMISES, QUICK_LINKS } from '@/components/mhome/footer-data';
+
+// DESKTOP (>= 1025px) footer: the app's navy footer (apps/mobile/src/components/Footer.tsx, the
+// phone site's AppFooter) laid out in columns - brand + promises, quick links, policies, contact,
+// the app. Below 1025px AppFooter is shown instead.
 
 const SOCIAL = {
-  youtube: { icon: FaYoutube, bg: 'bg-social-youtube' },
-  facebook: { icon: FaFacebook, bg: 'bg-social-facebook' },
-  instagram: { icon: FaInstagram, bg: 'bg-instagram' },
-  share: { icon: FaShareAlt, bg: 'bg-social-share' },
+  youtube: FaYoutube,
+  facebook: FaFacebook,
+  instagram: FaInstagram,
+  share: FaShareAlt,
 } as const;
 
-const BOTTOM_ICON_CLASS = 'mr-[4px] size-[12px] text-footer-icon';
-const BOTTOM_ICONS = {
-  shop: <FaStore className={BOTTOM_ICON_CLASS} />,
-  account: <FaUser className={BOTTOM_ICON_CLASS} />,
-  cart: <ShoppingCart aria-hidden="true" className={BOTTOM_ICON_CLASS} strokeWidth={3} />,
-  faq: <FaQuestionCircle className={BOTTOM_ICON_CLASS} />,
-} as const;
+const HEAD = 'mb-[14px] font-ui text-[12px] font-bold uppercase tracking-[1.2px] text-white/60';
+const LINK = 'font-ui text-[14.5px] font-medium text-white/90 transition-colors hover:text-[#ffd23f]';
 
-const LINK =
-  'rounded-sm hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-white';
-
-interface FooterColumnProps {
-  heading: string;
-  className: string;
-  children: React.ReactNode;
-}
-
-// <1025px each column is a row (heading | content), 1-up on mobile and 2-up on tablet, as live.
-function FooterColumn({ heading, className, children }: FooterColumnProps) {
-  return (
-    <section
-      className={`grid grid-cols-2 items-center gap-x-[14px] md:px-[10px] md:pb-[10px] md:pt-0 lg:block ${className}`}
-    >
-      <h2 className="pb-[16px] pt-[2px] font-ui text-[16px] font-extrabold uppercase leading-[35px] text-footer-heading">
-        {heading}
-      </h2>
-      <div>{children}</div>
-    </section>
-  );
-}
-
-function LinkList({ links }: { links: readonly { label: string; href: string }[] }) {
-  return (
-    <ul className="lg:ml-[11px]">
-      {links.map((link) => (
-        <li key={link.href}>
-          <Link
-            href={link.href}
-            className={`flex px-[10px] py-[5px] font-ui text-[12px] leading-[12px] ${LINK}`}
-          >
-            {link.label}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/** Site-wide footer, measured from the live youmartshop.com footer template. */
 export function SiteFooter() {
-  const year = new Date().getFullYear();
-
+  const contacts = [
+    { icon: Mail, value: BUSINESS.email, href: `mailto:${BUSINESS.email}` },
+    { icon: Phone, value: BUSINESS.phone, href: BUSINESS.phoneHref },
+    { icon: MessageCircle, value: BUSINESS.whatsapp, href: BUSINESS.whatsappHref },
+    { icon: MapPin, value: BUSINESS.address, href: BUSINESS.mapsHref },
+  ];
   return (
-    <footer className="mt-[40px] hidden bg-brand text-white lg:block">
-      <div className="px-[30px] pt-[40px] md:grid md:grid-cols-2 lg:flex">
-        <FooterColumn heading={FOOTER.about.heading} className="pb-[10px] pr-[10px] lg:w-[19%]">
-          <p className="mb-[21px] font-ui text-[12px] leading-[23.35px] lg:leading-[25.6px]">
-            {FOOTER.about.lead}&nbsp;<strong>{FOOTER.about.brand}</strong>
-            {FOOTER.about.rest}
-          </p>
-        </FooterColumn>
-
-        <FooterColumn heading={FOOTER.quickLinks.heading} className="pb-[10px] lg:w-[17%]">
-          <LinkList links={FOOTER.quickLinks.links} />
-        </FooterColumn>
-
-        <FooterColumn
-          heading={FOOTER.policy.heading}
-          className="pb-[10px] pr-[10px] pt-[20px] lg:w-[17.18%]"
-        >
-          <LinkList links={FOOTER.policy.links} />
-        </FooterColumn>
-
-        {/* Live squeezes email, "SOCIAL:" and the icons side by side on mobile (icons stack
-            vertically); they stack in the content cell here. */}
-        <FooterColumn
-          heading={FOOTER.mail.heading}
-          className="pb-[10px] pr-[10px] pt-[20px] lg:w-[22.48%] lg:border-l lg:border-footer-divider lg:pl-[30px]"
-        >
-          <div className="lg:pl-[15px]">
-            <p className="mb-[12px] font-ui text-[12px] leading-[25.6px] lg:mb-[41px] lg:pt-[25.6px]">
-              <a href={`mailto:${FOOTER.mail.email}`} className={LINK}>
-                {FOOTER.mail.email}
-              </a>
+    <footer className="relative mt-[64px] hidden overflow-hidden rounded-t-[36px] bg-[linear-gradient(170deg,#0b1f4d_0%,#0a2a6e_55%,#0142aa_100%)] lg:block">
+      <span aria-hidden="true" className="absolute -right-[140px] -top-[200px] size-[420px] rounded-full bg-white/[0.05]" />
+      <span aria-hidden="true" className="absolute -bottom-[220px] left-[30%] size-[380px] rounded-full bg-white/[0.04]" />
+      <div className="relative mx-auto max-w-[1440px] px-[32px] pt-[48px]">
+        <div className="grid grid-cols-[1.4fr_1fr_1fr_1.3fr_1fr] gap-[40px]">
+          <div>
+            <p className="font-ui text-[34px] font-bold leading-none text-white">
+              You<span className="text-[#ffd23f]">Mart</span>
             </p>
-            <h3 className="font-ui text-[13px] font-semibold uppercase leading-[16.9px] text-footer-subheading">
-              {FOOTER.social.heading}
-            </h3>
-            <ul className="mt-[12px] flex gap-[3px] lg:mt-[20px]">
-              {FOOTER.social.links.map((social) => {
-                const { icon: Icon, bg } = SOCIAL[social.id];
+            <p className="mt-[12px] max-w-[320px] text-[14px] leading-[21px] text-white/80">
+              Shop easy, live better - everything you need, delivered to your door.
+            </p>
+            <div className="mt-[20px] grid max-w-[340px] grid-cols-2 gap-[8px]">
+              {PROMISES.map((p) => (
+                <div key={p.label} className="flex items-center gap-[8px] rounded-[12px] bg-white/[0.08] px-[12px] py-[10px]">
+                  <p.icon aria-hidden="true" className="size-[17px] shrink-0 text-[#ffd23f]" />
+                  <span className="font-ui text-[13px] font-semibold text-white">{p.label}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-[20px] flex gap-[10px]">
+              {FOOTER.social.links.map((s) => {
+                const Icon = SOCIAL[s.id];
                 return (
-                  <li key={social.id}>
-                    <a
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={social.label}
-                      className={`flex size-[32.4px] items-center justify-center rounded-full ${bg} transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white`}
-                    >
-                      <Icon className="size-[18px] text-white" />
-                    </a>
-                  </li>
+                  <a
+                    key={s.id}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.label}
+                    className="flex size-[38px] items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-[#ffd23f] hover:text-[#0b1f4d]"
+                  >
+                    <Icon className="size-[16px]" />
+                  </a>
                 );
               })}
-            </ul>
+            </div>
           </div>
-        </FooterColumn>
 
-        <FooterColumn
-          heading={FOOTER.office.heading}
-          className="pb-[10px] pr-[10px] pt-[20px] lg:w-[24.33%]"
-        >
-          <p className="font-sans text-[12px] leading-[23.35px] lg:leading-[25.6px]">
-            {FOOTER.office.address}
-            <br />
-            <br />
-            <a href={FOOTER.office.phoneHref} className={`font-ui font-bold ${LINK}`}>
-              {FOOTER.office.phoneLabel}
-            </a>
-          </p>
-        </FooterColumn>
-      </div>
+          <nav aria-label="Quick links">
+            <p className={HEAD}>Quick links</p>
+            <ul className="flex flex-col gap-[10px]">
+              {QUICK_LINKS.map((l) => (
+                <li key={l.label}>
+                  <Link href={l.href} className={`${LINK} flex items-center gap-[8px]`}>
+                    <l.icon aria-hidden="true" className="size-[15px] text-[#ffd23f]" /> {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-      <div className="h-[20px]" />
+          <nav aria-label="More from YouMart">
+            <p className={HEAD}>Shop &amp; sell</p>
+            <ul className="flex flex-col gap-[10px]">
+              {FOOTER.quickLinks.links
+                .filter((l) => !QUICK_LINKS.some((q) => q.href === l.href))
+                .map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className={LINK}>
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+            </ul>
+            <p className={`${HEAD} mt-[24px]`}>{FOOTER.policy.heading}</p>
+            <ul className="flex flex-col gap-[10px]">
+              {FOOTER.policy.links.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className={LINK}>
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-      <div className="border-y border-footer-rule px-[30px] py-[10px] md:flex md:items-start">
-        <nav aria-label="Footer" className="p-[10px] md:w-[80%]">
-          <ul className="-mx-[10.5px] flex flex-wrap justify-center font-ui text-[12px] leading-[23.35px] md:-mx-[20px] lg:-mx-[25px] lg:leading-[25.6px]">
-            {FOOTER.bottomLinks.map((link) => (
-              <li
-                key={link.id}
-                className="relative mx-[10.5px] after:absolute after:-right-[10.5px] after:top-0 after:h-full after:border-l after:border-footer-separator md:mx-[20px] md:after:-right-[20px] lg:mx-[25px] lg:after:-right-[25px]"
-              >
-                <Link href={link.href} className={`flex items-center ${LINK}`}>
-                  {BOTTOM_ICONS[link.id]}
-                  <span className="pl-[5px]">{link.label}</span>
-                </Link>
-              </li>
-            ))}
-            <li className="mx-[10.5px] flex items-center md:mx-[20px] lg:mx-[25px]">
-              <FaCopyright className={BOTTOM_ICON_CLASS} />
-              <span className="pl-[5px]">
-                <span className="sr-only">Copyright </span>
-                {year} - {FOOTER.copyrightSite}
+          <div>
+            <p className={HEAD}>Get in touch</p>
+            <div className="flex flex-col gap-[12px]">
+              {contacts.map((c) => (
+                <a key={c.value} href={c.href} className="group flex items-start gap-[12px]">
+                  <span className="flex size-[32px] shrink-0 items-center justify-center rounded-full bg-[#ffd23f]">
+                    <c.icon aria-hidden="true" className="size-[15px] text-[#0b1f4d]" />
+                  </span>
+                  <span className="pt-[6px] font-ui text-[14px] font-medium leading-[20px] text-white group-hover:text-[#ffd23f]">{c.value}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className={HEAD}>Get the app</p>
+            <div className="rounded-[20px] border border-white/15 bg-white/[0.08] p-[18px]">
+              <span className="flex size-[44px] items-center justify-center rounded-[14px] bg-[#ffd23f]">
+                <Smartphone aria-hidden="true" className="size-[22px] text-[#0b1f4d]" />
               </span>
-            </li>
-          </ul>
-        </nav>
-        <div className="flex justify-center p-[10px] md:w-[20%]">
-          <Image
-            src="/placeholders/payments.svg"
-            alt={`We accept ${FOOTER.payments.join(', ')}`}
-            width={200}
-            height={33}
-            unoptimized
-            className="h-auto max-w-full"
-          />
+              <p className="mt-[12px] font-ui text-[16px] font-bold text-white">Shop faster on the YouMart app</p>
+              <p className="mt-[4px] text-[13px] leading-[18px] text-white/75">Deals, order tracking and quick reorder in your pocket.</p>
+              <a
+                href={BUSINESS.appStoreHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-[14px] flex items-center justify-center gap-[6px] rounded-[12px] bg-white py-[10px] font-ui text-[14px] font-bold text-brand transition-transform hover:scale-[1.03]"
+              >
+                Download app <ArrowRight aria-hidden="true" className="size-[15px]" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-[40px] flex items-center justify-between border-t border-white/[0.18] py-[18px] font-ui text-[13px] font-medium text-white/60">
+          <span>© 2026 YouMart · youmart.in · Made in India 🇮🇳</span>
+          <span className="flex gap-[20px]">
+            {FOOTER.policy.links.slice(0, 3).map((l) => (
+              <Link key={l.href} href={l.href} className="hover:text-white">
+                {l.label}
+              </Link>
+            ))}
+          </span>
         </div>
       </div>
     </footer>

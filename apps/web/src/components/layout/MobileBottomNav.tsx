@@ -12,7 +12,7 @@ import { useCartCount } from '@/lib/cart';
 // (Ionicons home / bookmark / cart / person / chatbubbles, MIT), 24px, grey #989898 or brand
 // blue, 11px labels, 52px bar. Phone + tablet only.
 
-const ICONS: Record<string, ReactNode> = {
+export const APP_NAV_ICONS: Record<string, ReactNode> = {
   home: (
     <>
       <path d="M261.56 101.28a8 8 0 00-11.06 0L66.4 277.15a8 8 0 00-2.47 5.79L63.9 448a32 32 0 0032 32H192a16 16 0 0016-16V328a8 8 0 018-8h80a8 8 0 018 8v136a16 16 0 0016 16h96.06a32 32 0 0032-32V282.94a8 8 0 00-2.47-5.79z" />
@@ -40,10 +40,10 @@ const ICONS: Record<string, ReactNode> = {
   ),
 };
 
-function Icon({ name, className }: { name: keyof typeof ICONS; className: string }) {
+export function AppNavIcon({ name, className }: { name: keyof typeof APP_NAV_ICONS; className: string }) {
   return (
     <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" className={className}>
-      {ICONS[name]}
+      {APP_NAV_ICONS[name]}
     </svg>
   );
 }
@@ -51,7 +51,7 @@ function Icon({ name, className }: { name: keyof typeof ICONS; className: string
 interface Tab {
   href: string;
   label: string;
-  icon: keyof typeof ICONS;
+  icon: keyof typeof APP_NAV_ICONS;
 }
 
 const LEFT: Tab[] = [
@@ -80,7 +80,7 @@ function TabLink({ tab, pathname, cartCount }: { tab: Tab; pathname: string; car
         className={ITEM}
       >
         <span className="relative">
-          <Icon name={tab.icon} className={`size-[24px] ${active ? 'text-brand' : 'text-[#989898]'}`} />
+          <AppNavIcon name={tab.icon} className={`size-[24px] ${active ? 'text-brand' : 'text-[#989898]'}`} />
           {tab.href === ROUTES.cart && <CartCountBadge count={cartCount} tone="onWhite" />}
         </span>
         <span className={`font-medium ${active ? 'text-brand' : 'text-[#818799]'}`}>{tab.label}</span>
@@ -109,7 +109,7 @@ export function MobileBottomNav() {
             <span className="relative grid h-[24px] w-[34px] place-items-center">
               <span className="absolute size-[34px] animate-pulse rounded-full bg-[#14b8a6]/70" aria-hidden="true" />
               <span className="relative grid size-[28px] place-items-center rounded-full bg-[linear-gradient(135deg,#38bdf8_0%,#0142aa_50%,#0d9488_100%)]">
-                <Icon name="chatbubbles" className="size-[15px] text-white" />
+                <AppNavIcon name="chatbubbles" className="size-[15px] text-white" />
               </span>
             </span>
             <span className="font-bold text-brand">Ask</span>

@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { skipImageOptimizer } from '@/lib/images';
 import {
   ArrowRight,
-  BadgeCheck,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -15,23 +14,15 @@ import {
   Diamond,
   Flame,
   Gift,
-  Home as HomeIcon,
-  Info,
   Lightbulb,
-  Lock,
   Mail,
   MapPin,
   MessageCircle,
-  Navigation,
   Phone,
-  Rocket,
-  RefreshCw,
   ShieldCheck,
-  ShoppingBag,
   Sparkles,
   Star,
   Tags,
-  HelpCircle,
   Check,
   Zap,
   type LucideIcon,
@@ -60,6 +51,7 @@ import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { BrandLogo } from './BrandLogo';
 import { MiniProductCard } from './MiniProductCard';
+import { PROMISES, QUICK_LINKS } from './footer-data';
 import { Dots, SNAP_ROW, SectionHead, usePager } from './pager';
 
 // The website's phone home (below 1025px) - the app's home screen section by section, same order,
@@ -160,7 +152,7 @@ export function CategoryPager({ mains }: { mains: MainCat[] }) {
 
 /* ------------------------------------------------------ handpicked deal panels */
 
-const RAIL_THEME: Record<ProductRailKey, { gradient: string; icon: LucideIcon; tagline: string }> = {
+export const RAIL_THEME: Record<ProductRailKey, { gradient: string; icon: LucideIcon; tagline: string }> = {
   'left-off': { gradient: 'linear-gradient(140deg,#0b1b3f 0%,#0142aa 55%,#2f6ae8 100%)', icon: Clock, tagline: 'Continue where you stopped' },
   trending: { gradient: 'linear-gradient(140deg,#3b0a6b 0%,#7c3aed 55%,#c026d3 100%)', icon: Flame, tagline: 'What everyone is buying' },
   'top-deals': { gradient: 'linear-gradient(140deg,#7f1d1d 0%,#e11d48 55%,#f97316 100%)', icon: Tags, tagline: 'Biggest savings today' },
@@ -168,9 +160,9 @@ const RAIL_THEME: Record<ProductRailKey, { gradient: string; icon: LucideIcon; t
   explore: { gradient: 'linear-gradient(140deg,#172554 0%,#1d4ed8 50%,#06b6d4 100%)', icon: Compass, tagline: 'Discover something new' },
 };
 
-const shortMoney = (m: Money) => formatMoney(m).replace(/\.00$/, '');
+export const shortMoney = (m: Money) => formatMoney(m).replace(/\.00$/, '');
 
-const RAIL_SORT: Record<ProductRailKey, string> = {
+export const RAIL_SORT: Record<ProductRailKey, string> = {
   'left-off': 'date',
   trending: 'rating',
   'top-deals': 'discount',
@@ -245,8 +237,8 @@ export function RailPanels({ rails }: { rails: ProductRailSlider[] }) {
 
 /* ------------------------------------------------------------ refer & earn */
 
-const INK = '#2a1a8f';
-const GOLD = '#ffc94d';
+export const INK = '#2a1a8f';
+export const GOLD = '#ffc94d';
 
 export function ReferBanner() {
   const signedIn = useSession().status === 'authenticated';
@@ -383,7 +375,7 @@ export function BrandOffers() {
 
 /* --------------------------------------------------------------- shop by brand */
 
-const GRID_BRANDS = [
+export const GRID_BRANDS = [
   'Apple', 'IFFCO URBAN GARDENS', 'Milton', 'Pampers', 'XERGY', 'Samsung', 'UGAOO', 'The Decorshed', 'Himalaya', 'Realme', 'TrustBasket', 'Crompton',
   'Dell', 'UTKARSH', 'Cello', 'Huggies', 'BEHOMA', 'Vivo', 'Erwon', 'Borosil', 'Beats', 'KRAFTSKALA', 'Go Garden', 'Oppo',
   'Lenovo', 'Lazy Gardener', 'TIED RIBBONS', 'MamyPoko', 'Xiaomi', 'OrganicDews', 'Halonix', 'Leafy Tales', 'Asus', 'Urban Plant', 'Huawei', 'BIODROPS',
@@ -424,7 +416,7 @@ export function BrandGrid() {
 
 /* ------------------------------------------- everything you need, in one place */
 
-const BIG_BANNERS = [
+export const BIG_BANNERS = [
   { id: 'products', image: '/banners/youmart-500000-products.webp', href: '/shop?orderby=rating', label: '500000+ products - shop now' },
   { id: 'brands', image: '/banners/youmart-8000-brands.webp', href: '/shop?orderby=discount', label: '8000+ brands - shop now' },
 ];
@@ -460,7 +452,7 @@ export function BigBanners() {
 
 /* ------------------------------------------------------------- shop our picks */
 
-const POSTERS: Record<ProductFilter, { icon: LucideIcon; lead: string; word: string; note: string; bg: string; ink: string; leadTone: string; wordTone: string; ring: string }> = {
+export const POSTERS: Record<ProductFilter, { icon: LucideIcon; lead: string; word: string; note: string; bg: string; ink: string; leadTone: string; wordTone: string; ring: string }> = {
   new: { icon: Sparkles, lead: 'New', word: 'Arrival', note: 'Fresh in store', bg: '#0142aa', ink: '#fff', leadTone: '#fee533', wordTone: '#fff', ring: '#0142aa' },
   all: { icon: Flame, lead: 'Hot', word: 'Sale', note: 'Trending now', bg: '#fdd039', ink: '#0f172a', leadTone: '#ff0000', wordTone: '#ff0000', ring: '#ff3300' },
   sale: { icon: Tags, lead: 'Best', word: 'Offer', note: 'Biggest savings', bg: '#0f172a', ink: '#fff', leadTone: '#fff', wordTone: '#ff3300', ring: '#0f172a' },
@@ -585,13 +577,13 @@ export function BestCategories({ slides }: { slides: BestCategorySlide[] }) {
 
 /* ----------------------------------------------------- trust strip + footer */
 
-const FEATURE_ICON: Record<FeatureCard['id'], LucideIcon> = { expertise: Lightbulb, quality: Diamond, guarantee: ShieldCheck };
-const FEATURE_TONE: Record<FeatureCard['id'], { bg: string; ink: string; chip: string }> = {
+export const FEATURE_ICON: Record<FeatureCard['id'], LucideIcon> = { expertise: Lightbulb, quality: Diamond, guarantee: ShieldCheck };
+export const FEATURE_TONE: Record<FeatureCard['id'], { bg: string; ink: string; chip: string }> = {
   expertise: { bg: '#fee533', ink: '#0f172a', chip: 'rgba(0,0,0,0.08)' },
   quality: { bg: '#024caa', ink: '#fff', chip: 'rgba(255,255,255,0.2)' },
   guarantee: { bg: '#28b463', ink: '#fff', chip: 'rgba(255,255,255,0.2)' },
 };
-const FEATURE_SHORT: Record<FeatureCard['id'], string> = {
+export const FEATURE_SHORT: Record<FeatureCard['id'], string> = {
   expertise: 'Expert help for every order',
   quality: 'Top-quality products',
   guarantee: 'Satisfaction guaranteed',
@@ -616,22 +608,6 @@ export function FeatureStrip() {
     </section>
   );
 }
-
-const PROMISES: { icon: LucideIcon; label: string }[] = [
-  { icon: BadgeCheck, label: 'Genuine products' },
-  { icon: Rocket, label: 'Fast delivery' },
-  { icon: RefreshCw, label: 'Easy returns' },
-  { icon: Lock, label: 'Secure payments' },
-];
-const QUICK_LINKS: { label: string; href: string; icon: LucideIcon }[] = [
-  { label: 'Home', href: ROUTES.home, icon: HomeIcon },
-  { label: 'My Orders', href: ROUTES.orders, icon: ShoppingBag },
-  { label: 'Track Order', href: ROUTES.trackOrder, icon: Navigation },
-  { label: 'Refer & Earn', href: ROUTES.refer, icon: Gift },
-  { label: 'About Us', href: '/about', icon: Info },
-  { label: 'Contact Us', href: ROUTES.contact, icon: Phone },
-  { label: 'FAQs', href: '/faq', icon: HelpCircle },
-];
 
 /** The app's compact navy footer - shown on every page below 1025px. */
 export function AppFooter() {

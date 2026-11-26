@@ -20,7 +20,7 @@ function readChoice(): string | null {
   }
 }
 
-export function DeliveryBar() {
+export function DeliveryBar({ className = '' }: { className?: string }) {
   const session = useSession();
   const authed = session.status === 'authenticated';
   const { addresses } = useAddresses();
@@ -51,7 +51,7 @@ export function DeliveryBar() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mt-[8px] flex max-w-full items-center gap-[6px] self-start rounded-[12px] border border-brand-popup-border bg-brand-popup-bg px-[12px] py-[7px]"
+        className={`mt-[8px] flex max-w-full items-center gap-[6px] self-start rounded-[12px] border border-brand-popup-border bg-brand-popup-bg px-[12px] py-[7px] transition-colors lg:hover:border-brand ${className}`}
       >
         <MapPin aria-hidden="true" className="size-[14px] shrink-0 fill-brand text-brand" />
         <span className="shrink-0 font-ui text-[13px] font-medium text-brand">Deliver to</span>
@@ -60,10 +60,10 @@ export function DeliveryBar() {
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-[90] lg:hidden" role="dialog" aria-modal="true" aria-label="Delivery address">
+        <div className="fixed inset-0 z-[90]" role="dialog" aria-modal="true" aria-label="Delivery address">
           <button type="button" aria-label="Close" className="absolute inset-0 bg-black/45" onClick={() => setOpen(false)} />
-          <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-[24px] bg-page px-[16px] pb-[calc(20px+env(safe-area-inset-bottom))] pt-[8px] animate-[ym-sheet-up_220ms_ease-out]">
-            <span aria-hidden="true" className="mx-auto mb-[12px] block h-[5px] w-[40px] rounded-full bg-card-border" />
+          <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-[24px] bg-page px-[16px] pb-[calc(20px+env(safe-area-inset-bottom))] pt-[8px] animate-[ym-sheet-up_220ms_ease-out] lg:bottom-auto lg:left-1/2 lg:right-auto lg:top-[110px] lg:w-[460px] lg:-translate-x-1/2 lg:rounded-[24px] lg:px-[24px] lg:pb-[24px] lg:pt-[20px] lg:shadow-[0_24px_60px_rgba(15,23,42,0.25)]">
+            <span aria-hidden="true" className="mx-auto mb-[12px] block h-[5px] w-[40px] rounded-full bg-card-border lg:hidden" />
             <div className="mb-[12px] flex items-start justify-between">
               <div>
                 <p className="font-ui text-[12px] font-bold uppercase tracking-[0.8px] text-brand">Delivery</p>
