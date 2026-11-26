@@ -82,6 +82,14 @@ jobs:
     timeout-minutes: 30
     environment: production
     steps:
+      # Prints the identity GitHub presents to AWS (sub / aud / repository / environment) - the
+      # values the role's trust policy must match. Only the claims are shown, never the token.
+      - name: Show the GitHub identity sent to AWS
+        run: |
+          curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" \
+            | python3 -c "import sys,json,base64;t=json.load(sys.stdin)['value'].split('.')[1];t+='='*(-len(t)%4);c=json.loads(base64.urlsafe_b64decode(t));print(json.dumps({k:c.get(k) for k in ('sub','aud','iss','repository','repository_owner','environment','ref')},indent=2))"
+
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
