@@ -41,6 +41,9 @@ if (!file) {
 
 const STOCK_PER_SKU = 50;
 const DISCOUNT_BANDS = [10, 25, 40, 50, 70];
+/** Discounts at or above this are a wrong MRP in the delivery, not a real offer. */
+const MAX_DISCOUNT_PCT = 90;
+const believable = (price, mrp) => !(mrp > 0) || price > mrp * (1 - MAX_DISCOUNT_PCT / 100);
 /** Fields of a variant entry that aren't its option name ("Weight", "Style Name", ...). */
 const VARIANT_META = new Set([
   'Selling Price (INR)',
@@ -282,8 +285,11 @@ for (const [index, p] of items.entries()) {
     categoriesNeeded.set(other.chain.at(-1)[0], other);
     if (!also.includes(other.chain.at(-1)[0])) also.push(other.chain.at(-1)[0]);
   }
-  const discount = Number(priceSource['Discount (%)']) || 0;
-  const mrp = Math.max(Number(priceSource['MRP (INR)']) || price, price);
+  // A 90%+ discount means the delivery's MRP is wrong (₹3,700 vs "MRP" ₹3,70,000): no discount
+  // is shown rather than a made-up one (MAX_DISCOUNT_PCT, same rule as fix-impossible-discounts.sql).
+  const rawMrp = Math.max(Number(priceSource['MRP (INR)']) || price, price);
+  const mrp = believable(price, rawMrp) ? rawMrp : price;
+  const discount = mrp > price ? Number(priceSource['Discount (%)']) || 0 : 0;
 
   // Variants -> SKUs. Any "<Option> Variants" list counts: each entry is one sellable option of
   // this ONE product. Its option fields ("Style Name", "Weight", "Size"...) are kept only where they
@@ -425,7 +431,7 @@ for (const [index, p] of items.entries()) {
       return {
         code: clean(v.Youmart_Product_ID),
         price: money(sp),
-        mrp: money(vMrp),
+        mrp: money(believable(sp, vMrp) ? vMrp : sp),
         // `_title` / `_image`: the variant's own title and picture (not options). v1.18 `_images`
         // its own photo set and `_specs` its own details (a colour's photos, a size's length).
         attributes: {
