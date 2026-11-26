@@ -166,7 +166,7 @@ const TREE: ReadonlyArray<[slug: string, name: string, subcategories: string]> =
   [
     'home-furnishing',
     'Home Furnishing',
-    'bath-linen=Bath Linen;bedsheets=Bedsheets;curtain-accessories=Curtain & Accessories;cushion-covers=Cushion Covers;carpets=Carpets;door-mats=Door Mats;fabric=Fabric;heavy-bed=Mattress;pillow-covers=Pillow Covers;quilts=Quilts;ready-made-curtains=Ready Made Curtains;rugs=Rugs;sheer-curtains=Sheer Curtains;sofa-covers=Sofa Covers;sofa-headrests=Sofa Headrests;string-curtains=String Curtains;table-linen=Table Linen;table-mat=Table Mat;towel=Towel;mosquito-nets=Mosquito Nets;cushions-and-pillows=Cushions & Pillows;rugs-and-mats=Rugs & Mats;sofa-and-chair-covers=Sofa & Chair Covers;blankets=Blankets;curtains=Curtains;aprons=Aprons;laundry-bags-and-mosquito-nets=Laundry Bags & Mosquito Nets',
+    'bath-linen=Bath Linen;bedsheets=Bedsheets;curtain-accessories=Curtain & Accessories;cushion-covers=Cushion Covers;carpets=Carpets;door-mats=Door Mats;fabric=Fabric;heavy-bed=Mattress;pillow-covers=Pillow Covers;quilts=Quilts;ready-made-curtains=Ready Made Curtains;rugs=Rugs;sheer-curtains=Sheer Curtains;sofa-covers=Sofa Covers;sofa-headrests=Sofa Headrests;string-curtains=String Curtains;table-linen=Table Linen;table-mat=Table Mat;towel=Towel;mosquito-nets=Mosquito Nets;cushions-and-pillows=Cushions & Pillows;rugs-and-mats=Rugs & Mats;sofa-and-chair-covers=Sofa & Chair Covers;blankets=Blankets;curtains=Curtains;aprons=Aprons;laundry-bags-and-mosquito-nets=Laundry Bags & Mosquito Nets;bed-linen=Bed Linen',
   ],
   [
     'stainless-steel-vessels',
@@ -226,7 +226,7 @@ const TREE: ReadonlyArray<[slug: string, name: string, subcategories: string]> =
   [
     'wall-clock',
     'Wall Clock & Watches',
-    'alaram-clock=Alaram Clock;analog-clock=Analog Clock;digital-clock=Digital Clock;double-side-clock=Double Side Clock;modern-clock=Modern Clock;fancy-clock=Fancy Clock;watch=Watch;wall-clocks=Wall Clocks;watches=Watches;watch-accessories=Watch Accessories',
+    'alaram-clock=Alaram Clock;analog-clock=Analog Clock;digital-clock=Digital Clock;double-side-clock=Double Side Clock;modern-clock=Modern Clock;fancy-clock=Fancy Clock;watch=Watch;wall-clocks=Wall Clocks;watches=Watches;watch-accessories=Watch Accessories;alarm-clocks=Alarm Clocks',
   ],
 ];
 
@@ -329,7 +329,7 @@ const THIRD_LEVEL: Readonly<Record<string, string>> = {
     'car-polish=Car Polish;car-shampoo=Car Shampoo;tyre-polish=Tyre Polish;microfiber-cloths=Microfiber Cloths;car-wax=Car Wax;car-cleaning=Car Cleaning',
   'auto-accessories/bike-accessories':
     'bike-covers=Bike Covers;bike-mirrors=Bike Mirrors;usb-chargers=USB Chargers;mobile-holders=Mobile Holders;bike-riding-gear=Bike Riding Gear;saddle-bags=Saddle Bags;helmet-accessories=Helmet Accessories',
-  'home-furnishing/cushions-and-pillows': 'cushions=Cushions;sleeping-pillows=Sleeping Pillows',
+  'home-furnishing/cushions-and-pillows': 'cushions=Cushions;sleeping-pillows=Sleeping Pillows;memory-foam-pillows=Memory Foam Pillows;pillow-protectors=Pillow Protectors',
   'electrical-and-lights/switches':
     'modular-switches=Modular Switches;smart-switches=Smart Switches',
   'auto-accessories/car-interior-accessories':
@@ -346,7 +346,7 @@ const THIRD_LEVEL: Readonly<Record<string, string>> = {
     'pendant-lights=Pendant Lights;led-ceiling-lights=LED Ceiling Lights',
   'auto-accessories/car-accessories': 'sun-shades=Sun Shades',
   'gifts/personalized-gifts': 'keychains=Keychains;diaries-personalized-gifts=Diaries;mugs=Mugs;pens=Pens;photo-gifts=Photo Gifts',
-  'home-furnishing/towel': 'face-towels=Face Towels;bath-towels=Bath Towels;hand-towels=Hand Towels;kitchen-towels=Kitchen Towels',
+  'home-furnishing/towel': 'face-towels=Face Towels;bath-towels=Bath Towels;hand-towels=Hand Towels;kitchen-towels=Kitchen Towels;bath-sheets=Bath Sheets',
   'electrical-and-lights/extension-boards':
     'adapters=Adapters;power-strips=Power Strips;surge-protectors=Surge Protectors',
   'electronics/mobile-accessories': 'cables=Cables;car-mounts=Car Mounts',
@@ -372,7 +372,7 @@ const THIRD_LEVEL: Readonly<Record<string, string>> = {
   'furniture/chairs': 'stools=Stools;office-chairs=Office Chairs;folding-chairs=Folding Chairs',
   'furniture/outdoor-furniture': 'garden-chairs=Garden Chairs;garden-tables=Garden Tables',
   'hardwares/safety-hardware': 'safety-helmets=Safety Helmets',
-  'home-furnishing/sofa-and-chair-covers': 'chair-covers=Chair Covers',
+  'home-furnishing/sofa-and-chair-covers': 'chair-covers=Chair Covers;recliner-covers=Recliner Covers',
   'clothing/winter-wear':
     'scarves=Scarves;sweatshirts=Sweatshirts;raincoats=Raincoats;jackets=Jackets;mufflers=Mufflers;windcheaters=Windcheaters;shawls=Shawls;ponchos=Ponchos;sweaters-and-cardigans=Sweaters and Cardigans;thermals=Thermals;gloves-winter-wear=Gloves',
   'cosmetics/body-care': 'foot-care=Foot Care;body-wash=Body Wash;body-scrubs=Body Scrubs;hand-cream=Hand Cream;body-lotion=Body Lotion',
@@ -472,19 +472,19 @@ const THIRD_LEVEL: Readonly<Record<string, string>> = {
   'furniture/beds': 'single-beds=Single Beds',
   'stationary/marker-ink': 'sketch-pens-marker-ink=Sketch Pens',
   'arts-and-crafts/art-easels': 'display-easels=Display Easels;portable-easels=Portable Easels;table-easels=Table Easels;floor-easels=Floor Easels',
-  'home-furnishing/blankets': 'fleece-blankets=Fleece Blankets;comforters=Comforters',
+  'home-furnishing/blankets': 'fleece-blankets=Fleece Blankets;comforters=Comforters;dohars=Dohars',
   'furniture/table': 'side-tables=Side Tables;coffee-tables=Coffee Tables',
   'toys/toy-cars-and-vehicles': 'die-cast-cars=Die-Cast Cars;toy-trains=Toy Trains;toy-trucks=Toy Trucks;construction-vehicles=Construction Vehicles;remote-control-toys=Remote Control Toys;toy-bikes=Toy Bikes',
   'travel-accessories/luggage-accessories': 'travel-wallets=Travel Wallets;travel-locks=Travel Locks;luggage-tags=Luggage Tags;luggage-straps=Luggage Straps;passport-holders=Passport Holders;rfid-passport-covers=RFID Passport Covers',
   'pet-products/pet-bowls-and-feeders': 'pet-feeding-accessories=Pet Feeding Accessories;automatic-feeders=Automatic Feeders;cat-bowls=Cat Bowls;stainless-steel-bowls=Stainless Steel Bowls',
   'home-appliances/water-purifiers': 'ro-purifiers=RO Purifiers',
-  'wall-clock/wall-clocks': 'designer-wall-clocks=Designer Wall Clocks',
+  'wall-clock/wall-clocks': 'designer-wall-clocks=Designer Wall Clocks;digital-wall-clocks=Digital Wall Clocks;analog-wall-clocks=Analog Wall Clocks;kids-wall-clocks=Kids Wall Clocks;metal-wall-clocks=Metal Wall Clocks;wooden-wall-clocks=Wooden Wall Clocks',
   'fashion-jewellery/necklaces': 'layered-necklaces=Layered Necklaces;chokers=Chokers;pendant-necklaces=Pendant Necklaces;pendant-sets=Pendant Sets;chains=Chains',
   'fashion-jewellery/ring': 'cocktail-rings=Cocktail Rings;nose-rings=Nose Rings;fashion-rings=Fashion Rings;adjustable-rings=Adjustable Rings',
   'fashion-jewellery/earrings': 'drop-earrings=Drop Earrings;hoop-earrings=Hoop Earrings;stud-earrings=Stud Earrings;jhumkas=Jhumkas',
   'fashion-jewellery/body-jewellery': 'chain-bracelets=Chain Bracelets;charm-bracelets=Charm Bracelets',
-  'wall-clock/watches': 'quartz-watches=Quartz Watches',
-  'wall-clock/watch-accessories': 'watch-straps=Watch Straps;watch-boxes=Watch Boxes',
+  'wall-clock/watches': 'quartz-watches=Quartz Watches;sports-watches=Sports Watches;mechanical-watches=Mechanical Watches;kids-watches=Kids Watches;automatic-watches=Automatic Watches;chronograph-watches=Chronograph Watches;women-s-watches=Women\'s Watches;digital-watches=Digital Watches;luxury-watches=Luxury Watches',
+  'wall-clock/watch-accessories': 'watch-straps=Watch Straps;watch-boxes=Watch Boxes;watch-winders=Watch Winders',
   'sports-fitness/fitness-and-gym': 'fitness-accessories=Fitness Accessories',
   'pet-products/pet-collars-and-leashes': 'dog-leashes=Dog Leashes;cat-collars=Cat Collars;harnesses=Harnesses;id-tags=ID Tags',
   'fashion-jewellery/jewellery-boxes': 'jewellery-organizers=Jewellery Organizers;jewellery-stands=Jewellery Stands;travel-jewellery-cases=Travel Jewellery Cases',
@@ -518,6 +518,8 @@ const THIRD_LEVEL: Readonly<Record<string, string>> = {
   'stainless-steel-vessels/cookware': 'pots-cookware=Pots',
   'travel-accessories/travel-bottles': 'travel-containers=Travel Containers;water-bottles-travel-bottles=Water Bottles;toiletry-bottles=Toiletry Bottles',
   'travel-accessories/travel-accessories-travel-accessories': 'universal-adapters=Universal Adapters;travel-chargers=Travel Chargers',
+  'wall-clock/alarm-clocks': 'digital-alarm-clocks=Digital Alarm Clocks;projection-clocks=Projection Clocks;stopwatches=Stopwatches;travel-alarm-clocks=Travel Alarm Clocks;table-clocks=Table Clocks',
+  'home-furnishing/bed-linen': 'bedsheet-sets=Bedsheet Sets;bed-covers=Bed Covers;flat-sheets=Flat Sheets;fitted-sheets=Fitted Sheets;mattress-protectors=Mattress Protectors',
 };
 
 /** The homepage category strip, in the exact order and naming of youmartshop.com. */
