@@ -26,7 +26,7 @@ import { showCartToast } from './cart-toast';
 import { getSession, onSessionChange, useSession } from './session';
 
 const GUEST_KEY = 'ym_guest_wishlist';
-export const WISHLIST_TOAST_ACTION = { href: ROUTES.wishlist, label: 'View wishlist' };
+export const WISHLIST_TOAST_ACTION = { href: ROUTES.wishlist, label: 'View Favourites' };
 
 export type WishlistMode = 'loading' | 'guest' | 'account';
 

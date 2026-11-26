@@ -30,7 +30,7 @@ export function WishlistButton({ product, variant }: WishlistButtonProps) {
         if (await wishlist.remove(saved.wishlistItemId)) {
           showCartToast({
             tone: 'success',
-            message: `"${product.title}" was removed from your Favourites.`,
+            message: 'Removed from your Favourites.',
             action: WISHLIST_TOAST_ACTION,
           });
         }
@@ -38,7 +38,7 @@ export function WishlistButton({ product, variant }: WishlistButtonProps) {
         setPopKey((k) => k + 1);
         showCartToast({
           tone: 'success',
-          message: `"${product.title}" was saved to your Favourites.`,
+          message: 'Saved to your Favourites.',
           action: WISHLIST_TOAST_ACTION,
         });
       }

@@ -42,7 +42,7 @@ export function CartToast() {
     <div
       key={toast.id}
       role={toast.tone === 'error' ? 'alert' : 'status'}
-      className={`fixed inset-x-[12px] bottom-[calc(88px+env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-[420px] animate-toast-in items-start gap-[10px] rounded-[10px] border-t-[3px] bg-woo-noticeBg px-[16px] py-[12px] font-ui text-[15px] leading-[1.5] text-woo-noticeText shadow-menu motion-reduce:animate-none lg:inset-x-auto lg:bottom-[24px] lg:right-[24px] ${border}`}
+      className={`fixed inset-x-[12px] bottom-[calc(68px+env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-[420px] animate-toast-in items-start gap-[10px] rounded-[10px] border-t-[3px] bg-woo-noticeBg px-[16px] py-[12px] font-ui text-[15px] leading-[1.5] text-woo-noticeText shadow-menu motion-reduce:animate-none lg:inset-x-auto lg:bottom-[24px] lg:right-[24px] ${border}`}
     >
       {icon}
       <div className="min-w-0 flex-1">

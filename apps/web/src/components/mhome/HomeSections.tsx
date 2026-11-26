@@ -119,7 +119,7 @@ export function CategoryPager({ mains }: { mains: MainCat[] }) {
       </div>
       <div {...bind} className={SNAP_ROW}>
         {pages.map((page, p) => (
-          <div key={p} className="grid w-full shrink-0 snap-start grid-cols-3 gap-x-[8px] gap-y-[10px] px-[16px]">
+          <div key={p} className="grid w-full shrink-0 snap-start content-start grid-cols-3 gap-x-[8px] gap-y-[10px] px-[16px]">
             {page.map((c) => (
               <Link
                 key={c.slug}
@@ -403,7 +403,7 @@ export function BrandGrid() {
       </div>
       <div {...bind} className={SNAP_ROW}>
         {BRAND_PAGES.map((brands, p) => (
-          <div key={p} className="grid w-full shrink-0 snap-start grid-cols-3 gap-[8px] px-[16px] py-[4px]">
+          <div key={p} className="grid w-full shrink-0 snap-start content-start grid-cols-3 gap-[8px] px-[16px] py-[4px]">
             {brands.map((name) => (
               <Link
                 key={name}

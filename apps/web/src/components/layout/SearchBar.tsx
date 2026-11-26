@@ -1,8 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Camera, Mic, Search } from 'lucide-react';
 import { SEARCH_PLACEHOLDER } from '@youmart/shared-client';
 import { SearchSuggestPanel, rememberSearch, useSearchSuggest } from './SearchSuggest';
@@ -41,6 +41,21 @@ export function SearchBar({ id, className = '', size = 'desktop' }: SearchBarPro
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
   const { data, recent, setRecent, items } = useSearchSuggest(value, open);
+  const pathname = usePathname();
+
+  // The box shows what the page is about: the query on /search, empty everywhere else (so an old
+  // search doesn't stay in the box on a category or product page). Back/forward re-sync it too.
+  useEffect(() => {
+    const sync = () =>
+      setValue(
+        window.location.pathname === '/search'
+          ? (new URLSearchParams(window.location.search).get('q') ?? '')
+          : '',
+      );
+    sync();
+    window.addEventListener('popstate', sync);
+    return () => window.removeEventListener('popstate', sync);
+  }, [pathname]);
 
   const go = (term: string) => {
     const q = term.trim();

@@ -1,18 +1,20 @@
 'use client';
 
-import { useId, useState, type FormEvent } from 'react';
+import { useEffect, useId, useState, type FormEvent } from 'react';
 import { MapPinned } from 'lucide-react';
 import { MapPicker } from './MapPicker';
 import {
   ADDRESS_TYPES,
   ApiError,
   INDIAN_STATES,
+  toLocalPhone,
   validateAddressForm,
   type AddressFormErrors,
   type AddressFormValues,
   type AddressInput,
 } from '@youmart/shared-client';
 import { Notice } from './Notice';
+import { useSession } from '@/lib/session';
 import {
   FIELD_ERROR,
   FORM_BUTTON,
@@ -43,6 +45,19 @@ export function AddressForm({ initial, title, onSave, onCancel }: AddressFormPro
   const [failure, setFailure] = useState<string | null>(null);
   const [mapOpen, setMapOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
+  const session = useSession();
+  const signedInPhone = session.status === 'authenticated' ? session.user.phone : null;
+  const signedInName = session.status === 'authenticated' ? session.user.name : null;
+
+  // Like the app: a new address starts with the signed-in mobile number (and name) filled in.
+  useEffect(() => {
+    if (!signedInPhone && !signedInName) return;
+    setValues((current) => ({
+      ...current,
+      phone: current.phone.trim() ? current.phone : signedInPhone ? toLocalPhone(signedInPhone) : '',
+      fullName: current.fullName.trim() ? current.fullName : (signedInName ?? ''),
+    }));
+  }, [signedInPhone, signedInName]);
 
   const set = <K extends keyof AddressFormValues>(key: K, value: AddressFormValues[K]) =>
     setValues((current) => ({ ...current, [key]: value }));

@@ -104,7 +104,7 @@ export function AppCart() {
         })}
       </ul>
 
-      <div className="fixed inset-x-0 bottom-[calc(70px+env(safe-area-inset-bottom))] z-30 flex flex-col gap-[4px] rounded-t-[18px] border-t border-cart-line bg-white px-[16px] py-[10px] shadow-[0_-6px_18px_rgba(15,23,42,0.08)]">
+      <div className="fixed inset-x-0 bottom-[calc(56px+env(safe-area-inset-bottom))] z-30 flex flex-col gap-[4px] rounded-t-[18px] border-t border-cart-line bg-white px-[16px] py-[10px] shadow-[0_-6px_18px_rgba(15,23,42,0.08)]">
         <div className="[&_p]:!text-[13px]">
           <FreeDeliveryProgress subtotal={cart.subtotal} />
         </div>

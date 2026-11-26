@@ -97,7 +97,7 @@ function SectionTitle({
 }
 
 const PILL =
-  'mb-[10px] flex h-[40px] w-full items-center justify-center gap-[8px] rounded-[30px] border-2 border-white bg-brand px-[36px] font-sans text-[17px] font-bold uppercase text-white transition-[opacity,box-shadow] duration-150 hover:opacity-90 hover:shadow-brand-button focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-70 disabled:shadow-none lg:h-[44px] lg:text-[20px]';
+  'mb-[10px] flex min-h-[48px] w-full py-[6px] text-center leading-[1.2] items-center justify-center gap-[8px] rounded-[30px] border-2 border-white bg-brand px-[16px] font-sans text-[15px] font-bold uppercase text-white transition-[opacity,box-shadow] duration-150 hover:opacity-90 hover:shadow-brand-button focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-70 disabled:shadow-none lg:min-h-[44px] lg:px-[36px] lg:text-[20px]';
 
 function Busy({ children }: { children: React.ReactNode }) {
   return (

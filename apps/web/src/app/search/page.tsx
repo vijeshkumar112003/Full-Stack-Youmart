@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { CategoryBar } from '@/components/category/CategoryBar';
 import { InfiniteProductGrid } from '@/components/listing/InfiniteProductGrid';
+import { PhoneFilterSheet } from '@/components/search/PhoneFilterSheet';
 import { SearchFilters, SearchToolbar } from '@/components/search/SearchFilters';
 import { searchProductsFiltered, type SearchFilterParams } from '@/lib/catalog';
 import { categoryBarMains } from '@/lib/category-taxonomy';
@@ -72,14 +73,16 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </h1>
         {q && (products.length > 0 || filtered) ? (
           <div className="lg:grid lg:grid-cols-[270px_1fr] lg:items-start lg:gap-[22px]">
-            <div className="mb-[16px] lg:sticky lg:top-[90px] lg:mb-0 lg:max-h-[calc(100vh-110px)] lg:overflow-y-auto">
-              <SearchFilters groups={groups} price={price} />
+            <div className="lg:sticky lg:top-[90px] lg:max-h-[calc(100vh-110px)] lg:overflow-y-auto">
+              <PhoneFilterSheet activeCount={Object.keys(filters).filter((k) => k !== 'sort').length}>
+                <SearchFilters key={q} groups={groups} price={price} />
+              </PhoneFilterSheet>
             </div>
             <div className="min-w-0">
               <SearchToolbar total={total} q={q} />
               {products.length > 0 ? (
                 <InfiniteProductGrid
-                  key={JSON.stringify(filters)}
+                  key={`${q}|${JSON.stringify(filters)}`}
                   initial={products}
                   total={total}
                   loadMore={loadMore}

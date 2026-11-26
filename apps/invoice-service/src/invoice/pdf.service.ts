@@ -62,7 +62,7 @@ function drawLineTableHeader(doc: PDFKit.PDFDocument, y: number): number {
   const widths = [20, 130, 50, 30, 60, 40, 50, 50, 50, 60];
   let x = 40;
   columns.forEach((col, i) => {
-    doc.text(col, x, y, { width: widths[i], align: i === 1 ? 'left' : 'right' });
+    doc.text(col, x, y, { width: widths[i], align: i <= 1 ? 'left' : 'right' });
     x += widths[i]!;
   });
   return y + 14;
@@ -88,12 +88,20 @@ function drawLineRow(
     line.igstAmount,
     line.lineTotal,
   ];
+  // A long product name wraps onto several lines: the row grows to fit it (and starts a new page
+  // when it would run off this one) so the next row never prints over it.
+  const rowHeight = Math.max(16, doc.heightOfString(line.titleSnapshot, { width: widths[1] }) + 6);
+  if (y + rowHeight > doc.page.height - doc.page.margins.bottom) {
+    doc.addPage();
+    y = doc.page.margins.top;
+    doc.font('Helvetica').fontSize(8);
+  }
   let x = 40;
   values.forEach((val, i) => {
-    doc.text(val, x, y, { width: widths[i], align: i === 1 ? 'left' : 'right' });
+    doc.text(val, x, y, { width: widths[i], align: i <= 1 ? 'left' : 'right' });
     x += widths[i]!;
   });
-  return y + 16;
+  return y + rowHeight;
 }
 
 /**

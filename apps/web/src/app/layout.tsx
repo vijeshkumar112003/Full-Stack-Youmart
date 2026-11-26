@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Before first paint: skip the intro for a visitor who already saw it this session. */}
         <script dangerouslySetInnerHTML={{ __html: INTRO_SKIP_SCRIPT }} />
       </head>
-      <body className="pb-[calc(79px+env(safe-area-inset-bottom))] lg:pb-0">
+      <body className="pb-[calc(64px+env(safe-area-inset-bottom))] lg:pb-0">
         <StoreChrome>
           <IntroSplash />
           <TermsGate />
