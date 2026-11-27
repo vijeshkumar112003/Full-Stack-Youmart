@@ -10,7 +10,6 @@ export default function EditAddressPage() {
   return (
     <RequireAuth>
       <AccountShell active="addresses">
-        <h1 className="sr-only">Addresses</h1>
         <AddressBook />
       </AccountShell>
     </RequireAuth>

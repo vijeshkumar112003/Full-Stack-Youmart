@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { AtSign, Camera, KeyRound, Loader2, Lock, Trash2 } from 'lucide-react';
-import { ApiError, authUserLabel, type AuthUser } from '@youmart/shared-client';
+import { AtSign, Camera, KeyRound, Loader2, Lock, Mail, Phone, Trash2 } from 'lucide-react';
+import { ApiError, authUserLabel, formatPhone, type AuthUser } from '@youmart/shared-client';
 import { api } from '@/lib/api';
 import { applyUserUpdate, useSession } from '@/lib/session';
 import { cleanUsername, passwordOk, useUsernameCheck } from '@/lib/username';
@@ -102,11 +102,14 @@ export function ProfileCard() {
   };
 
   return (
-    <section className="mb-[20px] overflow-hidden rounded-[16px] border border-catalog-rule bg-white shadow-rail-card">
-      <div className="h-[72px] bg-[linear-gradient(135deg,#0142aa,#0d66ad_60%,#1e88e5)]" />
+    <section className="mb-[20px] overflow-hidden rounded-[16px] border border-catalog-rule bg-white shadow-rail-card lg:rounded-[24px] lg:border-brand-popup-border">
+      <div className="relative h-[72px] overflow-hidden bg-[linear-gradient(135deg,#0142aa,#0d66ad_60%,#1e88e5)] lg:h-[96px]">
+        <span aria-hidden="true" className="absolute -right-[40px] -top-[70px] hidden size-[200px] rounded-full bg-white/10 lg:block" />
+        <span aria-hidden="true" className="absolute bottom-[-60px] right-[200px] hidden size-[140px] rounded-full bg-white/[0.06] lg:block" />
+      </div>
       <div className="flex flex-wrap items-end gap-[18px] px-[22px] pb-[18px]">
         <div className="relative -mt-[44px]">
-          <span className="flex size-[96px] items-center justify-center overflow-hidden rounded-full border-[4px] border-white bg-[#eef3fc] font-ui text-[30px] font-semibold text-brand shadow-rail-card">
+          <span className="flex size-[96px] items-center justify-center overflow-hidden rounded-full border-[4px] border-white bg-[#eef3fc] font-ui text-[30px] font-semibold text-brand shadow-rail-card lg:size-[112px] lg:text-[36px] lg:font-bold">
             {avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatar} alt="" className="size-full object-cover" />
@@ -133,9 +136,21 @@ export function ProfileCard() {
           />
         </div>
         <div className="min-w-0 flex-1 pb-[4px] font-ui">
-          <p className="truncate text-[20px] font-semibold text-heading">{user.name || authUserLabel(user)}</p>
+          <p className="truncate text-[20px] font-semibold text-heading lg:text-[22px] lg:font-bold">{user.name || authUserLabel(user)}</p>
           <p className="text-[14px] text-ink-muted">
             {user.username ? `@${user.username}` : 'No username yet'}
+          </p>
+          <p className="mt-[8px] hidden flex-wrap gap-[8px] lg:flex">
+            {user.phone ? (
+              <span className="inline-flex items-center gap-[6px] rounded-full bg-brand-popup-bg px-[12px] py-[4px] text-[13px] font-semibold text-brand">
+                <Phone aria-hidden="true" className="size-[13px]" /> {formatPhone(user.phone)}
+              </span>
+            ) : null}
+            {user.email ? (
+              <span className="inline-flex items-center gap-[6px] rounded-full bg-brand-popup-bg px-[12px] py-[4px] text-[13px] font-semibold text-brand">
+                <Mail aria-hidden="true" className="size-[13px]" /> {user.email}
+              </span>
+            ) : null}
           </p>
         </div>
         {avatar ? (
@@ -185,7 +200,7 @@ export function LoginSecurityPanel() {
 
   const row = (Icon: typeof AtSign, label: string, value: React.ReactNode, action: React.ReactNode) => (
     <div className="flex flex-wrap items-center gap-[14px] border-b border-catalog-rule py-[14px] font-ui last:border-0">
-      <span className="flex size-[40px] items-center justify-center rounded-[10px] bg-[#eef3fc] text-brand">
+      <span className="flex size-[40px] items-center justify-center rounded-[10px] bg-[#eef3fc] text-brand lg:size-[44px] lg:rounded-[14px]">
         <Icon aria-hidden="true" className="size-[18px]" />
       </span>
       <div className="min-w-0 flex-1">

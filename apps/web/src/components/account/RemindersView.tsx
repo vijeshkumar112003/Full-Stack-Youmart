@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { AlarmClock, CalendarClock, ImageOff, Pencil, Repeat2, RotateCw } from 'lucide-react';
+import { AlarmClock, CalendarClock, History, ImageOff, MessageCircle, Pencil, Repeat2, RotateCw } from 'lucide-react';
 import { formatMoney, type BuyReminder } from '@youmart/shared-client';
 import { RemindDialog } from '@/components/product/RemindDialog';
 import { api } from '@/lib/api';
 import { REPEAT_LABEL, fromNow, whenLabel } from '@/lib/reminder-time';
-import { BTN_PRIMARY, BTN_SMALL, EmptyState, PageHeader, Panel, Pill, Skeleton } from './ui';
+import { BTN_PRIMARY, BTN_SMALL, EmptyState, PageHeader, Panel, Pill, Skeleton, Tabs } from './ui';
 
 type Tab = 'upcoming' | 'past';
 
@@ -33,27 +33,25 @@ export function RemindersView() {
   return (
     <>
       <PageHeader
-        title="Reminders"
+        title="Remind me to buy"
+        icon={AlarmClock}
         subtitle="Products you asked us to remind you about - we send a WhatsApp with the price at that time."
         actions={
-          <div role="tablist" className="flex rounded-[10px] bg-[#f1f5f9] p-[3px]">
-            {(['upcoming', 'past'] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                role="tab"
-                aria-selected={tab === t}
-                onClick={() => setTab(t)}
-                className={`rounded-[8px] px-[16px] py-[6px] font-ui text-[13.5px] font-semibold capitalize transition-colors ${
-                  tab === t ? 'bg-white text-brand shadow-rail-card' : 'text-ink-muted hover:text-heading'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
+          <Tabs
+            label="Reminders"
+            value={tab}
+            onChange={setTab}
+            tabs={[
+              { key: 'upcoming', label: 'Upcoming', icon: CalendarClock, count: tab === 'upcoming' && items ? items.length : null },
+              { key: 'past', label: 'Past', icon: History, count: tab === 'past' && items ? items.length : null },
+            ]}
+          />
         }
       />
+      <p className="mb-[16px] hidden items-center gap-[10px] rounded-[16px] bg-[#e9f8ef] px-[16px] py-[11px] font-ui text-[13.5px] text-[#14532d] lg:flex">
+        <MessageCircle aria-hidden="true" className="size-[17px] shrink-0 text-[#16a34a]" />
+        We&rsquo;ll WhatsApp you at the time you picked, with the product&rsquo;s price at that moment - tap the message to buy.
+      </p>
 
       {items === null ? (
         <div className="grid gap-[14px] lg:grid-cols-2">
@@ -80,8 +78,15 @@ export function RemindersView() {
           {items.map((r) => {
             const at = new Date(r.remindAt);
             return (
-              <li key={r.reminderId} className="flex gap-[14px] rounded-[14px] border border-catalog-rule bg-white p-[14px] font-ui shadow-rail-card">
-                <Link href={`/product/${r.slug}`} className="flex size-[88px] shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-catalog-rule bg-white">
+              <li key={r.reminderId} className="flex gap-[14px] rounded-[14px] border border-catalog-rule bg-white p-[14px] font-ui shadow-rail-card transition-shadow lg:rounded-[20px] lg:border-brand-popup-border lg:p-[16px] lg:hover:shadow-product-card">
+                <span className={`hidden w-[62px] shrink-0 flex-col items-center justify-center self-start overflow-hidden rounded-[14px] text-center lg:flex ${tab === 'upcoming' ? 'bg-brand text-white' : 'bg-[#f1f5f9] text-ink-muted'}`}>
+                  <span className={`w-full py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] ${tab === 'upcoming' ? 'bg-[#013a96]' : 'bg-[#e2e8f0]'}`}>
+                    {at.toLocaleDateString('en-IN', { month: 'short' })}
+                  </span>
+                  <span className="pb-[2px] pt-[4px] text-[24px] font-bold leading-none">{at.getDate()}</span>
+                  <span className="pb-[6px] text-[11px] font-semibold opacity-80">{at.toLocaleDateString('en-IN', { weekday: 'short' })}</span>
+                </span>
+                <Link href={`/product/${r.slug}`} className="flex size-[88px] shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-catalog-rule bg-white lg:size-[96px] lg:rounded-[14px] lg:border-brand-popup-border">
                   {r.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={r.imageUrl} alt="" className="size-full object-contain p-[6px]" />
@@ -90,7 +95,7 @@ export function RemindersView() {
                   )}
                 </Link>
                 <div className="flex min-w-0 flex-1 flex-col">
-                  <Link href={`/product/${r.slug}`} className="line-clamp-2 text-[14.5px] font-semibold leading-[1.4] text-heading hover:text-brand">
+                  <Link href={`/product/${r.slug}`} className="line-clamp-2 text-[14.5px] font-semibold leading-[1.4] text-heading hover:text-brand lg:text-[15px] lg:font-bold">
                     {r.title}
                   </Link>
                   <p className="mt-[6px] flex items-center gap-[6px] text-[13px] text-heading">

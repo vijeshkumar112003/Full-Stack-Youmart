@@ -4,6 +4,7 @@ import { LoginSecurityPanel, ProfileCard } from '@/components/account/AccountExt
 import { EditAccountForm } from '@/components/account/EditAccountForm';
 import { RequireAuth } from '@/components/account/RequireAuth';
 import { PageHeader, Panel } from '@/components/account/ui';
+import { UserRound } from 'lucide-react';
 
 export const metadata: Metadata = { title: 'Account details - You Mart' };
 
@@ -11,12 +12,14 @@ export default function EditAccountPage() {
   return (
     <RequireAuth>
       <AccountShell active="account">
-        <PageHeader title="Account details" subtitle="Your profile, contact details and how you sign in." />
+        <PageHeader title="Account details" icon={UserRound} subtitle="Your profile, contact details and how you sign in." />
         <ProfileCard />
-        <Panel title="Personal details">
-          <EditAccountForm />
-        </Panel>
-        <LoginSecurityPanel />
+        <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-[20px]">
+          <Panel title="Personal details">
+            <EditAccountForm />
+          </Panel>
+          <LoginSecurityPanel />
+        </div>
       </AccountShell>
     </RequireAuth>
   );

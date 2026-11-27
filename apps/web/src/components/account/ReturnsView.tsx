@@ -132,6 +132,7 @@ export function ReturnsView() {
     <>
       <PageHeader
         title="Returns & refunds"
+        icon={RotateCcw}
         subtitle="Follow every return from request to refund. Refunds are added to your YouMart Wallet."
         actions={
           <Link href={ROUTES.orders} className={BTN_SECONDARY}>
@@ -151,13 +152,13 @@ export function ReturnsView() {
           },
           { label: 'Total returns', value: items ? String(items.length) : '—', Icon: RotateCcw },
         ].map(({ label, value, Icon }) => (
-          <div key={label} className="flex items-center gap-[14px] rounded-[14px] border border-catalog-rule bg-white p-[16px] shadow-rail-card">
-            <span className="flex size-[42px] items-center justify-center rounded-[12px] bg-[#eef3fc] text-brand">
+          <div key={label} className="flex items-center gap-[14px] rounded-[14px] border border-catalog-rule bg-white p-[16px] shadow-rail-card lg:rounded-[20px] lg:border-brand-popup-border lg:p-[18px]">
+            <span className="flex size-[42px] items-center justify-center rounded-[12px] bg-[#eef3fc] text-brand lg:size-[48px] lg:rounded-[16px] lg:bg-[linear-gradient(140deg,#0142aa,#3b82f6)] lg:text-white">
               <Icon aria-hidden="true" className="size-[20px]" />
             </span>
             <div className="font-ui">
               <p className="text-[12.5px] text-ink-muted">{label}</p>
-              <p className="text-[20px] font-bold tabular-nums text-heading">{value}</p>
+              <p className="text-[20px] font-bold tabular-nums text-heading lg:text-[24px]">{value}</p>
             </div>
           </div>
         ))}
@@ -192,7 +193,10 @@ export function ReturnsView() {
             return (
               <Panel key={r.id}>
                 <div className="flex flex-wrap items-start justify-between gap-[12px]">
-                  <div className="min-w-0 font-ui">
+                  <span className="hidden size-[52px] shrink-0 items-center justify-center rounded-[16px] bg-brand-popup-bg text-brand lg:flex">
+                    <PackageOpen aria-hidden="true" className="size-[24px]" />
+                  </span>
+                  <div className="min-w-0 flex-1 font-ui">
                     <p className="text-[16px] font-semibold leading-[1.4] text-heading">
                       {r.title ?? 'Returned item'}
                       {r.quantity && r.quantity > 1 ? (
@@ -226,7 +230,7 @@ export function ReturnsView() {
                     ) : null}
                   </div>
                 </div>
-                <div className="mt-[18px] border-t border-catalog-rule pt-[16px]">
+                <div className="mt-[18px] border-t border-catalog-rule pt-[16px] lg:rounded-[16px] lg:border-0 lg:bg-[#f8faff] lg:px-[16px] lg:pb-[12px] lg:pt-[14px]">
                   <ReturnTracker status={r.status} />
                 </div>
               </Panel>

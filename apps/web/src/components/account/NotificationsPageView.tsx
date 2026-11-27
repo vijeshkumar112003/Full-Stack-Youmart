@@ -1,23 +1,23 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Bell, Mail, MessageCircle, Settings2 } from 'lucide-react';
+import { Bell, KeyRound, Mail, MessageCircle, Package, Settings2, Tag } from 'lucide-react';
 import type { NotificationSettings } from '@youmart/shared-client';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { NotificationsView } from './NotificationsView';
-import { Banner, PageHeader, Panel, Skeleton } from './ui';
+import { Banner, PageHeader, Panel, Skeleton, Tabs } from './ui';
 
 type Group = keyof NotificationSettings;
 type Channel = 'whatsapp' | 'email';
 
-const GROUPS: { key: Group; title: string; sub: string }[] = [
-  { key: 'orderUpdates', title: 'Order updates', sub: 'Order confirmed, shipped and delivered, refunds and wallet credits.' },
-  { key: 'offers', title: 'Offers & promotions', sub: 'Deals, sales and new arrivals.' },
+const GROUPS: { key: Group; title: string; sub: string; Icon: typeof Mail }[] = [
+  { key: 'orderUpdates', title: 'Order updates', sub: 'Order confirmed, shipped and delivered, refunds and wallet credits.', Icon: Package },
+  { key: 'offers', title: 'Offers & promotions', sub: 'Deals, sales and new arrivals.', Icon: Tag },
 ];
-const CHANNELS: { key: Channel; label: string; Icon: typeof Mail }[] = [
-  { key: 'whatsapp', label: 'WhatsApp', Icon: MessageCircle },
-  { key: 'email', label: 'Email', Icon: Mail },
+const CHANNELS: { key: Channel; label: string; Icon: typeof Mail; tint: string }[] = [
+  { key: 'whatsapp', label: 'WhatsApp', Icon: MessageCircle, tint: 'bg-[#e9f8ef] text-[#16a34a]' },
+  { key: 'email', label: 'Email', Icon: Mail, tint: 'bg-[#eef3fc] text-brand' },
 ];
 
 function Switch({ on, onChange, label, disabled }: { on: boolean; onChange: (v: boolean) => void; label: string; disabled?: boolean }) {
@@ -65,7 +65,62 @@ function NotificationSettingsPanel() {
     }
   };
 
+  const desk = (
+    <div className="hidden font-ui lg:block">
+      {error ? <Banner tone="error">{error}</Banner> : null}
+      <div className="mb-[16px] grid grid-cols-2 gap-[16px]">
+        {GROUPS.map((g) => (
+          <section key={g.key} aria-labelledby={`ns-${g.key}`} className="rounded-[24px] border border-brand-popup-border bg-white p-[22px] shadow-rail-card">
+            <div className="mb-[16px] flex items-start gap-[14px]">
+              <span className="flex size-[46px] shrink-0 items-center justify-center rounded-[14px] bg-[linear-gradient(140deg,#0142aa,#3b82f6)] text-white">
+                <g.Icon aria-hidden="true" className="size-[21px]" />
+              </span>
+              <div>
+                <h2 id={`ns-${g.key}`} className="text-[18px] font-bold text-heading">
+                  {g.title}
+                </h2>
+                <p className="text-[13.5px] leading-[1.5] text-ink-muted">{g.sub}</p>
+              </div>
+            </div>
+            <ul className="flex flex-col gap-[10px]">
+              {CHANNELS.map((c) => (
+                <li key={c.key} className="flex items-center gap-[12px] rounded-[16px] bg-[#f8faff] px-[14px] py-[12px]">
+                  <span className={`flex size-[38px] items-center justify-center rounded-full ${c.tint}`}>
+                    <c.Icon aria-hidden="true" className="size-[18px]" />
+                  </span>
+                  <span className="flex-1">
+                    <span className="block text-[15px] font-bold text-heading">{c.label}</span>
+                    <span className="block text-[12.5px] text-ink-muted">
+                      {settings ? (settings[g.key][c.key] ? 'On - we’ll send these here' : 'Off') : 'Loading…'}
+                    </span>
+                  </span>
+                  {settings ? (
+                    <Switch on={settings[g.key][c.key]} onChange={(v) => void toggle(g.key, c.key, v)} label={`${g.title} on ${c.label}`} />
+                  ) : (
+                    <Skeleton className="h-[24px] w-[44px] rounded-full" />
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+      <div className="flex items-center gap-[14px] rounded-[20px] border border-brand-popup-border bg-white px-[18px] py-[14px] shadow-rail-card">
+        <span className="flex size-[40px] shrink-0 items-center justify-center rounded-[12px] bg-brand-popup-bg text-brand">
+          <KeyRound aria-hidden="true" className="size-[19px]" />
+        </span>
+        <p className="flex-1 text-[13.5px] text-ink-body">
+          <strong className="text-heading">Always on:</strong> your Alerts inbox here gets every update, and security codes (OTP) are always sent.
+        </p>
+        {saved ? <span className="rounded-full bg-[#e8f8ee] px-[12px] py-[4px] text-[13px] font-bold text-[#15803d]">Saved</span> : null}
+      </div>
+    </div>
+  );
+
   return (
+    <>
+    {desk}
+    <div className="lg:hidden">
     <Panel title="How we contact you" aside={saved ? <span className="font-ui text-[13px] font-semibold text-[#15803d]">Saved</span> : null} padded={false}>
       {error ? (
         <div className="px-[20px] pt-[16px]">
@@ -113,6 +168,8 @@ function NotificationSettingsPanel() {
         Your inbox here always gets every update. Security codes (OTP) are always sent.
       </p>
     </Panel>
+    </div>
+    </>
   );
 }
 
@@ -128,31 +185,24 @@ export function NotificationsPageView() {
   return (
     <>
       <PageHeader
-        title="Notifications"
-        subtitle="Order updates, refunds, returns and support replies."
+        title={tab === 'settings' ? 'Notification settings' : 'Alerts'}
+        icon={tab === 'settings' ? Settings2 : Bell}
+        subtitle={
+          tab === 'settings'
+            ? 'Choose where we send order updates and offers - WhatsApp, email or both.'
+            : 'Order updates, refunds, returns and support replies.'
+        }
         actions={
           signedIn ? (
-            <div role="tablist" className="flex rounded-[10px] bg-[#f1f5f9] p-[3px]">
-              {(
-                [
-                  ['inbox', 'Inbox', Bell],
-                  ['settings', 'Settings', Settings2],
-                ] as const
-              ).map(([key, label, Icon]) => (
-                <button
-                  key={key}
-                  type="button"
-                  role="tab"
-                  aria-selected={tab === key}
-                  onClick={() => setTab(key)}
-                  className={`inline-flex items-center gap-[6px] rounded-[8px] px-[14px] py-[6px] font-ui text-[13.5px] font-semibold transition-colors ${
-                    tab === key ? 'bg-white text-brand shadow-rail-card' : 'text-ink-muted hover:text-heading'
-                  }`}
-                >
-                  <Icon aria-hidden="true" className="size-[15px]" /> {label}
-                </button>
-              ))}
-            </div>
+            <Tabs
+              label="Notifications"
+              value={tab}
+              onChange={setTab}
+              tabs={[
+                { key: 'inbox', label: 'Inbox', icon: Bell },
+                { key: 'settings', label: 'Settings', icon: Settings2 },
+              ]}
+            />
           ) : null
         }
       />

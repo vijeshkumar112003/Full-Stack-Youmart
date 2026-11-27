@@ -18,13 +18,14 @@ import {
   FORM_ROW,
 } from '@/components/account/formStyles';
 import { api } from '@/lib/api';
+import { ShieldCheck } from 'lucide-react';
 
 type Errors = Partial<Record<'orderNumber' | 'phone', string>>;
 
 // Guest tracking (POST /api/orders/track): the order number AND the mobile number on the order must
 // both match, so the form can't be used to look up other people's orders. Called from the browser
 // so the gateway's per-IP limit applies to the customer, not to our web server.
-export function TrackOrderForm({ initialOrderNumber }: { initialOrderNumber: string }) {
+export function TrackOrderForm({ initialOrderNumber, aside }: { initialOrderNumber: string; aside?: React.ReactNode }) {
   const id = useId();
   const [orderNumber, setOrderNumber] = useState(initialOrderNumber);
   const [phone, setPhone] = useState('');
@@ -70,11 +71,14 @@ export function TrackOrderForm({ initialOrderNumber }: { initialOrderNumber: str
 
   return (
     <>
+      <div className="lg:mx-auto lg:grid lg:max-w-[1240px] lg:grid-cols-[minmax(0,1fr)_520px] lg:items-center lg:gap-[48px]">
+      {aside}
       <form
         onSubmit={(event) => void onSubmit(event)}
         noValidate
-        className="mx-auto my-[20px] max-w-[560px] rounded-[18px] border border-catalog-rule bg-white p-[24px] shadow-rail-card"
+        className="mx-auto my-[20px] max-w-[560px] rounded-[18px] border border-catalog-rule bg-white p-[24px] shadow-rail-card lg:my-0 lg:w-full lg:rounded-[28px] lg:border-brand-popup-border lg:p-[30px] lg:shadow-[0_24px_60px_rgba(1,66,170,0.16)]"
       >
+        <p className="mb-[6px] hidden font-ui text-[22px] font-bold text-heading lg:block">Find your order</p>
         <p className={`${BODY_TEXT} mb-[25.6px]`}>
           Enter your Order ID <em>or</em> the courier tracking number from your
           &ldquo;shipped&rdquo; message, and the mobile number you used at checkout, then click
@@ -122,19 +126,23 @@ export function TrackOrderForm({ initialOrderNumber }: { initialOrderNumber: str
           )}
         </p>
         <p className="m-[3px]">
-          <button type="submit" disabled={pending} className={FORM_BUTTON}>
+          <button type="submit" disabled={pending} className={`${FORM_BUTTON} lg:w-full`}>
             {pending ? 'Tracking\u2026' : 'Track Order'}
           </button>
         </p>
+        <p className="mt-[10px] hidden items-center gap-[6px] font-ui text-[12.5px] text-ink-muted lg:flex">
+          <ShieldCheck aria-hidden="true" className="size-[14px] text-[#16a34a]" /> Both must match the order - nobody else can look it up.
+        </p>
       </form>
+      </div>
 
       {failure && (
-        <div className="mx-auto max-w-[500px]">
+        <div className="mx-auto max-w-[500px] lg:mt-[24px]">
           <Notice tone="error">{failure}</Notice>
         </div>
       )}
       {result && (
-        <div className="mx-auto max-w-[800px]">
+        <div className="mx-auto max-w-[800px] lg:mt-[28px] lg:max-w-[1000px]">
           <TrackingResult result={result} />
         </div>
       )}

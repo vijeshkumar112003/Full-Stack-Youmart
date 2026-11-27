@@ -42,6 +42,7 @@ import {
   Skeleton,
   dateTime,
 } from './ui';
+import { useDesktop } from '@/components/checkout/DeskCheckout';
 
 const TYPE: Record<WalletTransaction['type'], { label: string; Icon: typeof Wallet }> = {
   TOPUP: { label: 'Money added', Icon: PlusCircle },
@@ -83,6 +84,7 @@ export function WalletView() {
     null,
   );
   const amountRef = useRef<HTMLInputElement>(null);
+  const desk = useDesktop();
 
   const load = useCallback(async () => {
     try {
@@ -103,7 +105,7 @@ export function WalletView() {
 
   useEffect(() => {
     if (focusAdd) amountRef.current?.focus();
-  }, [focusAdd]);
+  }, [focusAdd, desk]);
 
   const more = async () => {
     if (!cursor || loadingMore) return;
@@ -218,6 +220,298 @@ export function WalletView() {
 
   const shown = (items ?? []).filter((t) => filter === 'ALL' || t.direction === filter);
   const held = wallet && wallet.held !== '0.00';
+
+  if (desk) {
+    const groups: { key: string; label: string; rows: WalletTransaction[] }[] = [];
+    for (const t of shown) {
+      const d = new Date(t.createdAt);
+      const key = `${d.getFullYear()}-${d.getMonth()}`;
+      let g = groups[groups.length - 1];
+      if (!g || g.key !== key) {
+        g = { key, label: new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric' }).format(d), rows: [] };
+        groups.push(g);
+      }
+      g.rows.push(t);
+    }
+    const counts = {
+      ALL: (items ?? []).length,
+      CREDIT: (items ?? []).filter((t) => t.direction === 'CREDIT').length,
+      DEBIT: (items ?? []).filter((t) => t.direction === 'DEBIT').length,
+    };
+    return (
+      <div className="font-ui">
+        <div className="mb-[18px] flex items-center gap-[12px]">
+          <span aria-hidden="true" className="h-[44px] w-[5px] rounded-[3px] bg-brand" />
+          <div>
+            <h1 className="text-[28px] font-bold leading-[34px] text-heading">YouMart Wallet</h1>
+            <p className="text-[14px] font-medium text-ink-muted">
+              Refunds land here instantly. Pay for orders with it - on its own or with another method.
+            </p>
+          </div>
+        </div>
+
+        <div className="mb-[18px] grid grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-[20px]">
+          {/* The app's wallet card. */}
+          <section aria-label="Wallet balance" className="relative flex flex-col overflow-hidden rounded-[28px] bg-[linear-gradient(130deg,#0142aa_0%,#1d5fd1_55%,#3b82f6_100%)] p-[28px] text-white shadow-[0_18px_40px_rgba(1,66,170,0.28)]">
+            <span aria-hidden="true" className="absolute -right-[70px] -top-[70px] size-[240px] rounded-full bg-white/10" />
+            <span aria-hidden="true" className="absolute -bottom-[90px] right-[60px] size-[200px] rounded-full bg-white/[0.06]" />
+            <div className="relative flex items-center justify-between">
+              <p className="flex items-center gap-[10px] text-[15px] font-semibold">
+                <span className="flex size-[40px] items-center justify-center rounded-[14px] bg-white/15">
+                  <Wallet aria-hidden="true" className="size-[21px]" />
+                </span>
+                Available balance
+              </p>
+              <span className="rounded-full bg-white/15 px-[12px] py-[4px] text-[12.5px] font-semibold">Store credit</span>
+            </div>
+            {wallet ? (
+              <p className="relative mt-[18px] text-[48px] font-bold leading-none tracking-tight tabular-nums">
+                {formatMoney(wallet.available)}
+              </p>
+            ) : (
+              <Skeleton className="relative mt-[18px] h-[48px] w-[220px] bg-white/20" />
+            )}
+            <div className="relative mt-auto grid grid-cols-2 gap-[12px] pt-[24px]">
+              <div className="rounded-[16px] bg-white/[0.12] px-[16px] py-[12px]">
+                <p className="text-[12.5px] text-white/75">Total balance</p>
+                <p className="mt-[2px] text-[18px] font-bold tabular-nums">{wallet ? formatMoney(wallet.balance) : '—'}</p>
+              </div>
+              <div className="rounded-[16px] bg-white/[0.12] px-[16px] py-[12px]">
+                <p className="text-[12.5px] text-white/75">Reserved for unpaid orders</p>
+                <p className="mt-[2px] text-[18px] font-bold tabular-nums">{wallet ? formatMoney(wallet.held) : '—'}</p>
+              </div>
+            </div>
+            {held ? (
+              <p className="relative mt-[10px] text-[12.5px] text-white/80">
+                Reserved money is released if the order isn&rsquo;t paid in time.
+              </p>
+            ) : null}
+          </section>
+
+          {/* Add money. */}
+          <section aria-labelledby="wallet-add" className="rounded-[28px] border border-brand-popup-border bg-white p-[24px] shadow-rail-card">
+            <h2 id="wallet-add" className="flex items-center gap-[10px] text-[19px] font-bold text-heading">
+              <span className="flex size-[34px] items-center justify-center rounded-[12px] bg-brand-popup-bg text-brand">
+                <PlusCircle aria-hidden="true" className="size-[18px]" />
+              </span>
+              Add money
+            </h2>
+            <label htmlFor="wallet-amount-desk" className="mb-[6px] mt-[16px] block text-[13.5px] font-bold text-heading">
+              Amount
+            </label>
+            <div className="relative">
+              <span className="pointer-events-none absolute left-[16px] top-1/2 -translate-y-1/2 text-[22px] font-bold text-ink-muted">₹</span>
+              <input
+                ref={amountRef}
+                id="wallet-amount-desk"
+                inputMode="decimal"
+                autoComplete="off"
+                value={input}
+                disabled={busy}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                  if (phase === 'done') setPhase('idle');
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && void addMoney()}
+                placeholder="0"
+                className="h-[58px] w-full rounded-[16px] border border-brand-popup-border bg-[#f8faff] pl-[38px] pr-[14px] text-[24px] font-bold tabular-nums text-heading placeholder:text-ink-placeholder focus:border-brand focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/20"
+              />
+            </div>
+            <div className="mt-[12px] grid grid-cols-4 gap-[8px]">
+              {QUICK.map((q) => {
+                const on = toAmount(input) === Number(q).toFixed(2);
+                return (
+                  <button
+                    key={q}
+                    type="button"
+                    disabled={busy}
+                    onClick={() => setInput(q)}
+                    className={`rounded-[12px] py-[8px] text-[14px] font-bold transition-colors ${
+                      on ? 'bg-brand text-white shadow-[0_6px_12px_rgba(1,66,170,0.3)]' : 'bg-brand-popup-bg text-brand hover:bg-[#dce8fd]'
+                    }`}
+                  >
+                    +₹{Number(q).toLocaleString('en-IN')}
+                  </button>
+                );
+              })}
+            </div>
+            {limits ? (
+              <p className="mt-[10px] text-[12.5px] text-ink-muted">
+                {formatMoney(limits.min)} – {formatMoney(limits.max)} at a time · wallet limit {formatMoney(limits.maxBalance)}
+              </p>
+            ) : null}
+            <button
+              type="button"
+              onClick={() => void addMoney()}
+              disabled={busy}
+              className="mt-[16px] flex h-[54px] w-full items-center justify-center gap-[8px] rounded-[16px] bg-brand text-[16px] font-bold text-white shadow-[0_10px_18px_rgba(1,66,170,0.32)] transition-colors hover:bg-[#013a96] disabled:cursor-wait disabled:opacity-70"
+            >
+              {busy ? (
+                <>
+                  <Loader2 aria-hidden="true" className="size-[17px] animate-spin" />
+                  {phase === 'confirming' ? 'Confirming payment…' : 'Opening Razorpay…'}
+                </>
+              ) : (
+                <>
+                  <Lock aria-hidden="true" className="size-[16px]" />
+                  {amount ? `Add ${formatMoney(amount)}` : 'Add money'}
+                </>
+              )}
+            </button>
+            <p className="mt-[10px] flex items-center justify-center gap-[6px] text-[12.5px] text-ink-muted">
+              <CheckCircle2 aria-hidden="true" className="size-[14px] text-[#16a34a]" />
+              Secure payment by Razorpay - UPI, cards, net banking
+            </p>
+          </section>
+        </div>
+
+        {message ? <Banner tone={message.tone}>{message.text}</Banner> : null}
+
+        <ul className="mb-[18px] grid grid-cols-3 gap-[12px]">
+          {[
+            { Icon: RotateCcw, title: 'Instant refunds', text: 'Cancelled & returned items are refunded here once approved' },
+            { Icon: ShoppingBag, title: 'Pay at checkout', text: 'Use it on its own or together with UPI or a card' },
+            { Icon: Info, title: 'Store credit', text: 'For shopping on YouMart - it can’t be withdrawn as cash', link: true },
+          ].map(({ Icon, title, text, link }) => (
+            <li key={title} className="flex items-center gap-[12px] rounded-[18px] border border-brand-popup-border bg-white px-[16px] py-[12px] shadow-rail-card">
+              <span className="flex size-[40px] shrink-0 items-center justify-center rounded-[12px] bg-brand-popup-bg text-brand">
+                <Icon aria-hidden="true" className="size-[19px]" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[14px] font-bold text-heading">{title}</span>
+                <span className="block text-[12.5px] leading-[17px] text-ink-muted">
+                  {text}
+                  {link ? (
+                    <>
+                      {' · '}
+                      <Link href="/refund-policy" className="font-semibold text-brand hover:underline">
+                        Refund policy
+                      </Link>
+                    </>
+                  ) : null}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        <section aria-labelledby="wallet-activity" className="rounded-[28px] border border-brand-popup-border bg-white p-[22px] shadow-rail-card">
+          <div className="mb-[14px] flex items-center justify-between gap-[12px]">
+            <h2 id="wallet-activity" className="text-[19px] font-bold text-heading">
+              Wallet activity
+            </h2>
+            <div role="tablist" aria-label="Filter activity" className="flex gap-[8px]">
+              {(
+                [
+                  ['ALL', 'All'],
+                  ['CREDIT', 'Money in'],
+                  ['DEBIT', 'Money out'],
+                ] as const
+              ).map(([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  role="tab"
+                  aria-selected={filter === key}
+                  onClick={() => setFilter(key)}
+                  className={`rounded-full px-[14px] py-[7px] text-[13.5px] font-bold transition-colors ${
+                    filter === key
+                      ? 'bg-brand text-white shadow-[0_6px_12px_rgba(1,66,170,0.3)]'
+                      : 'bg-white text-heading ring-1 ring-brand-popup-border hover:ring-brand'
+                  }`}
+                >
+                  {label}
+                  {items ? ` (${counts[key]})` : ''}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {items === null ? (
+            <div className="space-y-[10px]">
+              {[0, 1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-[64px] w-full" />
+              ))}
+            </div>
+          ) : loadError && items.length === 0 ? (
+            <Banner tone="error">
+              Couldn&rsquo;t load your wallet.{' '}
+              <button type="button" onClick={() => void load()} className="font-semibold underline">
+                Try again
+              </button>
+            </Banner>
+          ) : shown.length === 0 ? (
+            <div className="flex flex-col items-center py-[40px] text-center">
+              <span className="flex size-[64px] items-center justify-center rounded-full bg-brand-popup-bg text-brand">
+                <Receipt aria-hidden="true" className="size-[28px]" />
+              </span>
+              <p className="mt-[12px] text-[17px] font-bold text-heading">No wallet activity yet</p>
+              <p className="mt-[2px] text-[13.5px] text-ink-muted">Money you add, refunds and wallet payments will show up here.</p>
+            </div>
+          ) : (
+            groups.map((g) => (
+              <div key={g.key} className="mb-[8px]">
+                <p className="mb-[8px] mt-[6px] text-[12.5px] font-bold uppercase tracking-[1px] text-ink-muted">{g.label}</p>
+                <ul className="flex flex-col gap-[8px]">
+                  {g.rows.map((t) => {
+                    const { label, Icon } = TYPE[t.type];
+                    const credit = t.direction === 'CREDIT';
+                    return (
+                      <li key={t.id} className="flex items-center gap-[14px] rounded-[16px] bg-[#f8faff] px-[14px] py-[12px]">
+                        <span
+                          className={`flex size-[42px] shrink-0 items-center justify-center rounded-full ${
+                            credit ? 'bg-[#e8f7ee] text-[#15803d]' : 'bg-[#fff1e6] text-[#c2410c]'
+                          }`}
+                        >
+                          <Icon aria-hidden="true" className="size-[19px]" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[14.5px] font-bold text-heading">{label}</p>
+                          <p className="truncate text-[13px] text-ink-muted">
+                            {t.description}
+                            {t.orderNumber ? (
+                              <>
+                                {' · '}
+                                <Link href={orderHref(t.orderNumber)} className="font-semibold text-brand hover:underline">
+                                  #{t.orderNumber}
+                                </Link>
+                              </>
+                            ) : null}
+                          </p>
+                        </div>
+                        <span className="w-[170px] shrink-0 text-[13px] text-ink-muted">{dateTime(t.createdAt)}</span>
+                        <span className="w-[130px] shrink-0 text-right">
+                          <span className={`flex items-center justify-end gap-[4px] text-[15.5px] font-bold tabular-nums ${credit ? 'text-[#15803d]' : 'text-heading'}`}>
+                            {credit ? <ArrowDownLeft aria-hidden="true" className="size-[14px]" /> : <ArrowUpRight aria-hidden="true" className="size-[14px]" />}
+                            {credit ? '+' : '−'}
+                            {formatMoney(t.amount)}
+                          </span>
+                          <span className="block text-[12px] tabular-nums text-ink-muted">Balance {formatMoney(t.balanceAfter)}</span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))
+          )}
+          {cursor ? (
+            <div className="pt-[8px] text-center">
+              <button
+                type="button"
+                onClick={() => void more()}
+                disabled={loadingMore}
+                className="inline-flex items-center gap-[8px] rounded-full bg-brand-popup-bg px-[18px] py-[9px] text-[14px] font-bold text-brand hover:bg-[#dce8fd] disabled:opacity-60"
+              >
+                {loadingMore ? <Loader2 aria-hidden="true" className="size-[16px] animate-spin" /> : null}
+                Show older activity
+              </button>
+            </div>
+          ) : null}
+        </section>
+      </div>
+    );
+  }
 
   return (
     <>

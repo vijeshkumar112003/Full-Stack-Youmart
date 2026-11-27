@@ -6,9 +6,9 @@ export const FORM_ROW = 'mb-[15px] p-[3px]';
 export const FORM_LABEL =
   'mb-[5px] block font-ui text-[13.1px] font-bold leading-[28.8px] text-ink-body lg:text-[14.4px]';
 export const FORM_INPUT =
-  'h-[41.7px] w-full rounded-[10px] border border-catalog-rule bg-white p-[12px] font-ui text-[14.6px] leading-none text-ink-input transition-[border-color,box-shadow] duration-150 placeholder:text-ink-placeholder hover:border-cart-border focus:outline-none focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand disabled:bg-[#f3f4f6] lg:h-[45.8px] lg:text-[16px]';
+  'h-[41.7px] w-full rounded-[10px] border border-catalog-rule bg-white p-[12px] font-ui text-[14.6px] leading-none text-ink-input transition-[border-color,box-shadow] duration-150 placeholder:text-ink-placeholder hover:border-cart-border focus:outline-none focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand disabled:bg-[#f3f4f6] lg:h-[48px] lg:rounded-[14px] lg:border-brand-popup-border lg:px-[14px] lg:text-[15.5px]';
 export const FORM_BUTTON =
-  'inline-flex h-[46.8px] items-center justify-center rounded-[5px] bg-brand px-[34px] font-ui text-[12.8px] font-semibold uppercase leading-none text-white transition-[opacity,box-shadow] duration-150 hover:opacity-90 hover:shadow-brand-button focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-70 disabled:shadow-none lg:h-[48px] lg:text-[14px]';
+  'inline-flex h-[46.8px] items-center justify-center rounded-[5px] bg-brand px-[34px] font-ui text-[12.8px] font-semibold uppercase leading-none text-white transition-[opacity,box-shadow] duration-150 hover:opacity-90 hover:shadow-brand-button focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-70 disabled:shadow-none lg:h-[50px] lg:rounded-[14px] lg:px-[28px] lg:text-[15px] lg:font-bold lg:normal-case lg:shadow-[0_8px_16px_rgba(1,66,170,0.25)] lg:hover:opacity-100 lg:hover:bg-[#013a96]';
 export const FORM_REQUIRED = 'font-bold text-woo-required';
 export const FIELD_ERROR = 'mt-[4px] block font-ui text-[13px] leading-[1.4] text-woo-error';
 export const FIELD_HINT = 'mt-[4px] block font-ui text-[13px] leading-[1.4] text-ink-muted';

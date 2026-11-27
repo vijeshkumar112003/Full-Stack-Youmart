@@ -15,6 +15,7 @@ import {
   RotateCcw,
   ShieldCheck,
   ShoppingBasket,
+  ShoppingCart,
   Star,
   TicketPercent,
   Truck,
@@ -122,6 +123,22 @@ export function AccountShell({ active, children, title, backHref = ROUTES.accoun
             </ul>
           </div>
         ))}
+        {/* The app's "Sell on YouMart" banner (phones show it on the account page). */}
+        <Link
+          href={ROUTES.sell}
+          className="relative mt-[10px] flex items-center gap-[10px] overflow-hidden rounded-[16px] bg-brand p-[12px] transition-shadow hover:shadow-[0_8px_18px_rgba(1,66,170,0.3)]"
+        >
+          <span aria-hidden="true" className="absolute -right-[30px] -top-[40px] size-[110px] rounded-full bg-white/[0.07]" />
+          <span className="flex size-[38px] shrink-0 items-center justify-center rounded-[12px] border border-white/25 bg-white/10">
+            <ShoppingCart aria-hidden="true" className="size-[19px] fill-[#ffd23f] text-[#ffd23f]" />
+          </span>
+          <span className="relative min-w-0 flex-1">
+            <span className="block font-ui text-[14.5px] font-bold text-white">Sell on YouMart</span>
+            <span className="flex items-center gap-[5px] font-ui text-[11px] font-bold tracking-[0.8px] text-[#ffd23f]">
+              <span className="size-[6px] rounded-full bg-[#ffd23f]" /> COMING SOON
+            </span>
+          </span>
+        </Link>
       </nav>
       <div className="ym-account min-w-0 lg:flex-1">{children}</div>
     </div>

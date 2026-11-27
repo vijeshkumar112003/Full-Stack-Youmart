@@ -50,6 +50,18 @@ function when(iso: string): string {
   return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 }
 
+/** Today / Yesterday / This week / Earlier, for the desktop day groups. */
+function dayGroup(iso: string): string {
+  const d = new Date(iso);
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  const diff = (start.getTime() - new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()) / 86_400_000;
+  if (diff <= 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  if (diff < 7) return 'This week';
+  return 'Earlier';
+}
+
 function target(m: InboxMessage): string | null {
   if (m.webLink) return m.webLink; // v1.17 e.g. "Back in stock" -> that product / category
   if (m.kind === 'SUPPORT') return ROUTES.customerCare;
@@ -158,7 +170,7 @@ export function NotificationsView() {
 
   return (
     <div className="font-ui">
-      <div className="mb-[14px] flex flex-wrap items-center justify-between gap-[10px]">
+      <div className="mb-[14px] flex flex-wrap items-center justify-between gap-[10px] lg:mb-[18px] lg:rounded-[20px] lg:border lg:border-brand-popup-border lg:bg-white lg:px-[14px] lg:py-[12px] lg:shadow-rail-card">
         <div role="tablist" className="flex flex-wrap gap-[6px]">
           {FILTERS.map((f) => {
             const on = f.value === filter;
@@ -169,10 +181,10 @@ export function NotificationsView() {
                 role="tab"
                 aria-selected={on}
                 onClick={() => setFilter(f.value)}
-                className={`h-[32px] rounded-full px-[14px] text-[13px] font-semibold transition ${
+                className={`h-[32px] rounded-full px-[14px] text-[13px] font-semibold transition lg:h-[36px] lg:px-[16px] lg:font-bold ${
                   on
-                    ? 'bg-brand text-white'
-                    : 'border border-catalog-rule bg-white text-ink-strong hover:border-brand'
+                    ? 'bg-brand text-white lg:shadow-[0_6px_12px_rgba(1,66,170,0.3)]'
+                    : 'border border-catalog-rule bg-white text-ink-strong hover:border-brand lg:border-brand-popup-border'
                 }`}
               >
                 {f.label}
@@ -209,8 +221,8 @@ export function NotificationsView() {
       ) : !items ? (
         <div aria-busy="true" className="min-h-[240px]" />
       ) : items.length === 0 ? (
-        <div className="flex flex-col items-center rounded-[14px] border border-catalog-rule bg-white px-[20px] py-[48px] text-center">
-          <span className="mb-[12px] flex size-[60px] items-center justify-center rounded-full bg-[#e9f0ff] text-brand">
+        <div className="flex flex-col items-center rounded-[14px] border border-catalog-rule bg-white px-[20px] py-[48px] text-center lg:rounded-[24px] lg:border-brand-popup-border lg:py-[64px] lg:shadow-rail-card">
+          <span className="mb-[12px] flex size-[60px] items-center justify-center rounded-full bg-[#e9f0ff] text-brand lg:size-[80px] lg:shadow-[0_0_0_10px_#f5f8ff]">
             <Bell aria-hidden="true" className="size-[26px]" />
           </span>
           <p className="text-[17px] font-semibold text-heading">You&rsquo;re all caught up</p>
@@ -220,23 +232,28 @@ export function NotificationsView() {
         </div>
       ) : (
         <ul className="flex flex-col gap-[10px]">
-          {items.map((m) => {
+          {items.map((m, i) => {
             const k = KIND[m.kind];
             const Icon = k.icon;
             const href = target(m);
+            const group = dayGroup(m.createdAt);
+            const first = i === 0 || dayGroup(items[i - 1]!.createdAt) !== group;
             return (
-              <li
-                key={m.id}
-                className={`group relative flex gap-[14px] rounded-[14px] border p-[14px] transition ${
+              <li key={m.id} className="contents">
+                {first ? (
+                  <p className="mt-[6px] hidden text-[12.5px] font-bold uppercase tracking-[1px] text-ink-muted first:mt-0 lg:block">{group}</p>
+                ) : null}
+              <div
+                className={`group relative flex gap-[14px] rounded-[14px] border p-[14px] transition lg:rounded-[18px] lg:p-[16px] lg:hover:shadow-product-card ${
                   m.read
-                    ? 'border-catalog-rule bg-white'
+                    ? 'border-catalog-rule bg-white lg:border-brand-popup-border'
                     : 'border-[#bcd0f7] bg-[#f5f8ff] shadow-[0_2px_10px_rgba(1,66,170,0.07)]'
                 }`}
               >
                 <span
-                  className={`flex size-[42px] shrink-0 items-center justify-center rounded-full ${k.className}`}
+                  className={`flex size-[42px] shrink-0 items-center justify-center rounded-full lg:size-[48px] lg:rounded-[14px] ${k.className}`}
                 >
-                  <Icon aria-hidden="true" className="size-[19px]" />
+                  <Icon aria-hidden="true" className="size-[19px] lg:size-[21px]" />
                 </span>
                 <button type="button" onClick={() => open(m)} className="min-w-0 flex-1 text-left">
                   <span className="flex items-center gap-[8px]">
@@ -279,6 +296,7 @@ export function NotificationsView() {
                     <Trash2 aria-hidden="true" className="size-[15px]" />
                   </button>
                 </div>
+              </div>
               </li>
             );
           })}

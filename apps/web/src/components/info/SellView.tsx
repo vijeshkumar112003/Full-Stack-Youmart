@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, Bike, Check, CheckCircle2, Clock, LayoutGrid, Loader2, ShieldCheck, Store, XCircle } from 'lucide-react';
+import { ArrowRight, BarChart3, Bike, Box, Check, CheckCircle2, Clock, IndianRupee, LayoutGrid, Loader2, ShieldCheck, Store, XCircle } from 'lucide-react';
 import {
   ApiError,
   STORE_CATEGORIES,
@@ -12,7 +12,7 @@ import {
   type SellerApplicationStatus,
   type SellerBusinessType,
 } from '@youmart/shared-client';
-import { BTN_PRIMARY, INPUT, Skeleton } from '@/components/account/ui';
+import { INPUT, Skeleton } from '@/components/account/ui';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
 
@@ -47,6 +47,40 @@ const digits = (v: string) => v.replace(/\D/g, '').replace(/^(91|0)(?=\d{10}$)/,
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
+const ORBIT = [Box, IndianRupee, Bike, BarChart3];
+
+/** The app's storefront with icons slowly orbiting it (still when reduced motion is on). */
+function Orbit() {
+  return (
+    <div aria-hidden="true" className="relative flex size-[236px] shrink-0 items-center justify-center">
+      <span className="absolute size-[184px] rounded-full border border-dashed border-white/20" />
+      <span className="absolute size-[120px] rounded-full border border-white/10" />
+      <div className="absolute size-[184px] animate-[spin_24s_linear_infinite] motion-reduce:animate-none">
+        {ORBIT.map((Icon, i) => {
+          const a = (i / ORBIT.length) * Math.PI * 2;
+          return (
+            <span
+              key={i}
+              className="absolute left-1/2 top-1/2"
+              style={{ transform: `translate(calc(-50% + ${Math.round(Math.cos(a) * 92)}px), calc(-50% + ${Math.round(Math.sin(a) * 92)}px))` }}
+            >
+              <span className="flex size-[36px] animate-[spin_24s_linear_infinite_reverse] items-center justify-center rounded-full bg-white/10 ring-1 ring-white/20 backdrop-blur motion-reduce:animate-none">
+                <Icon className="size-[16px] text-white" />
+              </span>
+            </span>
+          );
+        })}
+      </div>
+      <span
+        className="relative flex size-[78px] items-center justify-center rounded-[24px] shadow-[0_0_0_10px_rgba(255,214,10,0.12),0_16px_36px_rgba(255,214,10,0.3)]"
+        style={{ background: GOLD }}
+      >
+        <Store className="size-[36px] text-[#1f1300]" />
+      </span>
+    </div>
+  );
+}
+
 function Status({ app }: { app: SellerApplication }) {
   if (app.status === 'DECLINED') {
     return (
@@ -61,9 +95,18 @@ function Status({ app }: { app: SellerApplication }) {
   const at = TRACK.findIndex((t) => t.status === app.status);
   return (
     <div>
-      <p className="mb-[14px] text-[14px] text-ink-muted">
-        Reference <strong className="text-heading">{app.referenceCode}</strong> · {app.businessName}
-      </p>
+      <div className="mb-[18px] flex items-start gap-[12px] rounded-[16px] bg-[#f8faff] p-[14px]">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[16px] font-bold text-heading">{app.businessName}</p>
+          <p className="truncate text-[13px] text-ink-muted">
+            {TYPE_LABEL[app.businessType]} · {app.category} · {app.city}
+          </p>
+        </div>
+        <div className="shrink-0 rounded-[12px] bg-white px-[12px] py-[6px] text-right ring-1 ring-brand-popup-border">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted">Ref.</p>
+          <p className="text-[14px] font-bold text-brand">{app.referenceCode}</p>
+        </div>
+      </div>
       <ol className="space-y-[2px]">
         {TRACK.map((t, i) => {
           const done = i <= at;
@@ -72,7 +115,7 @@ function Status({ app }: { app: SellerApplication }) {
               {i < TRACK.length - 1 ? (
                 <span aria-hidden="true" className={`absolute left-[13px] top-[28px] h-[calc(100%-28px)] w-[2px] ${i < at ? 'bg-brand' : 'bg-[#e2e8f0]'}`} />
               ) : null}
-              <span className={`relative z-[1] flex size-[28px] shrink-0 items-center justify-center rounded-full ${done ? 'bg-brand text-white' : 'border-2 border-[#cbd5e1] bg-white'}`}>
+              <span className={`relative z-[1] flex size-[28px] shrink-0 items-center justify-center rounded-full ${done ? 'bg-brand text-white' : 'border-2 border-[#cbd5e1] bg-white'} ${i === at ? 'shadow-[0_0_0_5px_rgba(1,66,170,0.15)]' : ''}`}>
                 {done ? <Check aria-hidden="true" className="size-[15px]" strokeWidth={3} /> : null}
               </span>
               <span>
@@ -181,30 +224,45 @@ export function SellView() {
       <section className="relative overflow-hidden bg-[linear-gradient(160deg,#050f26_0%,#0a2463_55%,#0142aa_100%)] text-white">
         <span aria-hidden="true" className="absolute -right-[120px] -top-[120px] size-[420px] rounded-full bg-white/[0.06]" />
         <span aria-hidden="true" className="absolute bottom-[-160px] left-[30%] size-[360px] rounded-full bg-[#ffd60a]/[0.07]" />
-        <div className="relative mx-auto grid max-w-[1240px] items-center gap-[40px] px-[20px] py-[56px] lg:grid-cols-[1.2fr_1fr]">
+        <span aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.07)_1px,transparent_1px)] [background-size:22px_22px]" />
+        <div className="relative mx-auto grid max-w-[1240px] items-center gap-[40px] px-[20px] py-[56px] lg:max-w-[1440px] lg:grid-cols-[1.1fr_1fr] lg:gap-[64px] lg:px-[32px] lg:py-[64px]">
           <div>
-            <span className="inline-flex items-center gap-[8px] rounded-full bg-white/10 px-[12px] py-[5px] text-[12.5px] font-semibold uppercase tracking-[0.1em]" style={{ color: GOLD }}>
-              <span className="size-[7px] animate-pulse rounded-full" style={{ background: GOLD }} /> Coming soon · early access open
+            <span
+              className="inline-flex items-center gap-[8px] rounded-full bg-white/10 px-[12px] py-[5px] text-[12.5px] font-bold uppercase tracking-[0.1em]"
+              style={{ color: GOLD }}
+            >
+              <span className="size-[7px] animate-pulse rounded-full" style={{ background: GOLD }} /> Launching soon · early
+              access open
             </span>
-            <h1 className="mt-[16px] text-[40px] font-bold leading-[1.15]">
-              Sell on <span style={{ color: GOLD }}>YouMart</span>
-            </h1>
-            <p className="mt-[12px] max-w-[520px] text-[16.5px] leading-[1.6] text-white/80">
-              Reach shoppers across India with 5 lakh+ products already on YouMart. We handle delivery and payments - you
-              focus on your products.
-            </p>
-            <div className="mt-[24px] grid max-w-[520px] grid-cols-2 gap-[12px]">
-              {PERKS.map(({ Icon, title, text }) => (
-                <div key={title} className="rounded-[14px] bg-white/[0.07] p-[14px] ring-1 ring-white/10">
-                  <Icon aria-hidden="true" className="mb-[6px] size-[20px]" style={{ color: GOLD }} />
-                  <p className="text-[14.5px] font-semibold">{title}</p>
-                  <p className="text-[12.5px] text-white/70">{text}</p>
-                </div>
-              ))}
+            <div className="mt-[8px] hidden lg:block">
+              <Orbit />
             </div>
+            <p className="mt-[16px] text-[12.5px] font-bold uppercase tracking-[0.16em] text-[#8fa6dc] lg:mt-[4px]">
+              YouMart for sellers
+            </p>
+            <h1 className="mt-[8px] text-[40px] font-bold leading-[1.1] lg:text-[52px]">
+              Your shop.
+              <br />
+              <span style={{ color: GOLD }}>Every doorstep.</span>
+            </h1>
+            <p className="mt-[14px] max-w-[540px] text-[16.5px] leading-[1.6] text-white/80">
+              YouMart is opening to sellers. Bring your products to customers across India, and we take care of orders,
+              delivery and payments.
+            </p>
+            <ul className="mt-[22px] flex flex-wrap gap-[10px]">
+              {['No fees to apply', 'Takes about a minute', '5 lakh+ products already live'].map((t) => (
+                <li
+                  key={t}
+                  className="flex items-center gap-[6px] rounded-full bg-white/[0.08] px-[12px] py-[6px] text-[13px] font-semibold ring-1 ring-white/15"
+                >
+                  <CheckCircle2 aria-hidden="true" className="size-[14px]" style={{ color: GOLD }} />
+                  {t}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="rounded-[20px] bg-white p-[24px] text-heading shadow-[0_30px_70px_rgba(0,0,0,0.35)]">
+          <div id="sell-apply" className="scroll-mt-[16px] rounded-[24px] bg-white p-[24px] text-heading shadow-[0_30px_70px_rgba(0,0,0,0.35)] lg:p-[28px]">
             {app === undefined ? (
               <Skeleton className="h-[320px] w-full" />
             ) : app ? (
@@ -218,13 +276,33 @@ export function SellView() {
                 </div>
               </>
             ) : !signedIn ? (
-              <div className="py-[16px] text-center">
-                <BarChart3 aria-hidden="true" className="mx-auto mb-[10px] size-[40px] text-brand" />
-                <p className="text-[18px] font-semibold">Get early access</p>
-                <p className="mt-[6px] text-[14px] text-ink-muted">Sign in to apply - it takes about a minute.</p>
-                <Link href={loginHref(pathname)} className={`${BTN_PRIMARY} mt-[16px]`}>
-                  Sign in to apply
+              <div>
+                <span className="flex size-[56px] items-center justify-center rounded-[18px]" style={{ background: GOLD }}>
+                  <Store aria-hidden="true" className="size-[28px] text-[#1f1300]" />
+                </span>
+                <p className="mt-[14px] text-[22px] font-bold">Get early access</p>
+                <p className="mt-[4px] text-[14.5px] text-ink-muted">
+                  Sign in to apply - it takes about a minute. We&rsquo;ll contact you before we open to sellers.
+                </p>
+                <p className="mb-[8px] mt-[18px] text-[12.5px] font-bold uppercase tracking-[0.1em] text-ink-muted">
+                  What we&rsquo;ll ask
+                </p>
+                <ul className="grid grid-cols-2 gap-[8px]">
+                  {['Business or store name', 'Your city', 'What you sell', 'GST registered or not'].map((t) => (
+                    <li key={t} className="flex items-center gap-[8px] rounded-[12px] bg-[#f8faff] px-[12px] py-[10px] text-[13.5px] font-semibold text-heading">
+                      <Check aria-hidden="true" className="size-[15px] shrink-0 text-brand" strokeWidth={3} />
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href={loginHref(pathname)}
+                  className="mt-[20px] flex h-[52px] w-full items-center justify-center gap-[8px] rounded-[16px] text-[16px] font-bold text-[#1f1300] shadow-[0_10px_20px_rgba(255,214,10,0.35)] transition-[filter] hover:brightness-95"
+                  style={{ background: GOLD }}
+                >
+                  Sign in to apply <ArrowRight aria-hidden="true" className="size-[18px]" />
                 </Link>
+                <p className="mt-[10px] text-center text-[12.5px] text-ink-muted">No fees to apply · No commitment</p>
               </div>
             ) : (
               <>
@@ -297,7 +375,7 @@ export function SellView() {
                   </div>
                 </div>
                 {serverError ? <p className="mt-[10px] text-[13.5px] text-woo-error">{serverError}</p> : null}
-                <button type="button" onClick={() => void submit()} disabled={sending} className="mt-[16px] inline-flex h-[46px] w-full items-center justify-center gap-[8px] rounded-[12px] text-[15px] font-semibold text-[#1f1300] transition-[filter] hover:brightness-95 disabled:opacity-60" style={{ background: GOLD }}>
+                <button type="button" onClick={() => void submit()} disabled={sending} className="mt-[18px] inline-flex h-[52px] w-full items-center justify-center gap-[8px] rounded-[16px] text-[16px] font-bold text-[#1f1300] shadow-[0_10px_20px_rgba(255,214,10,0.35)] transition-[filter] hover:brightness-95 disabled:opacity-60" style={{ background: GOLD }}>
                   {sending ? <Loader2 aria-hidden="true" className="size-[16px] animate-spin" /> : null}
                   Apply for early access
                 </button>
@@ -307,18 +385,86 @@ export function SellView() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1240px] px-[20px] py-[48px]">
-        <h2 className="mb-[24px] text-center text-[26px] font-semibold text-heading">How selling will work</h2>
-        <ol className="grid gap-[16px] md:grid-cols-2 lg:grid-cols-4">
-          {STEPS.map((s, i) => (
-            <li key={s.title} className="rounded-[16px] border border-catalog-rule bg-white p-[20px] shadow-rail-card">
-              <span className="mb-[12px] flex size-[38px] items-center justify-center rounded-full bg-brand text-[16px] font-bold text-white">{i + 1}</span>
-              <p className="text-[16px] font-semibold text-heading">{s.title}</p>
-              <p className="mt-[4px] text-[14px] leading-[1.55] text-ink-muted">{s.text}</p>
+      <section className="mx-auto max-w-[1240px] px-[20px] py-[48px] lg:max-w-[1440px] lg:px-[32px] lg:py-[56px]">
+        <p className="text-center text-[12.5px] font-bold uppercase tracking-[0.16em] text-brand">How it will work</p>
+        <h2 className="mb-[28px] mt-[6px] text-center text-[26px] font-bold text-heading lg:text-[32px]">
+          From sign-up to payout in four steps
+        </h2>
+        <ol className="relative grid gap-[16px] md:grid-cols-2 lg:grid-cols-4 lg:gap-[20px]">
+          <span
+            aria-hidden="true"
+            className="absolute left-[12%] right-[12%] top-[39px] hidden h-[3px] rounded-full bg-[linear-gradient(90deg,#0142aa,#93b4ee)] lg:block"
+          />
+          {STEPS.map((step, i) => (
+            <li
+              key={step.title}
+              className="relative rounded-[24px] border border-brand-popup-border bg-white p-[20px] text-center shadow-rail-card"
+            >
+              <span className="mx-auto mb-[14px] flex size-[42px] items-center justify-center rounded-full bg-brand text-[17px] font-bold text-white shadow-[0_0_0_6px_#ffffff,0_8px_16px_rgba(1,66,170,0.3)]">
+                {i + 1}
+              </span>
+              <p className="text-[16.5px] font-bold text-heading">{step.title}</p>
+              <p className="mt-[4px] text-[14px] leading-[1.55] text-ink-muted">{step.text}</p>
             </li>
           ))}
         </ol>
       </section>
+
+      <section className="bg-[#f3f7fe] py-[48px] lg:py-[56px]">
+        <div className="mx-auto max-w-[1240px] px-[20px] lg:max-w-[1440px] lg:px-[32px]">
+          <p className="text-center text-[12.5px] font-bold uppercase tracking-[0.16em] text-brand">Built for sellers</p>
+          <h2 className="mb-[28px] mt-[6px] text-center text-[26px] font-bold text-heading lg:text-[32px]">
+            Everything you need to sell online
+          </h2>
+          <ul className="grid gap-[16px] md:grid-cols-2 lg:grid-cols-4 lg:gap-[20px]">
+            {PERKS.map(({ Icon, title, text }) => (
+              <li
+                key={title}
+                className="rounded-[24px] border border-brand-popup-border bg-white p-[22px] shadow-rail-card transition-shadow hover:shadow-product-card"
+              >
+                <span className="mb-[14px] flex size-[48px] items-center justify-center rounded-[16px] bg-brand-popup-bg text-brand">
+                  <Icon aria-hidden="true" className="size-[23px]" />
+                </span>
+                <p className="text-[16.5px] font-bold text-heading">{title}</p>
+                <p className="mt-[4px] text-[14px] leading-[1.55] text-ink-muted">{text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {app ? null : (
+        <section className="mx-auto max-w-[1240px] px-[20px] py-[48px] lg:max-w-[1440px] lg:px-[32px]">
+          <div className="relative flex flex-col items-center gap-[18px] overflow-hidden rounded-[28px] bg-[linear-gradient(120deg,#050f26_0%,#0a2463_55%,#0142aa_100%)] px-[28px] py-[34px] text-center text-white lg:flex-row lg:px-[44px] lg:text-left">
+            <span aria-hidden="true" className="absolute -right-[60px] -top-[80px] size-[240px] rounded-full bg-white/[0.06]" />
+            <span className="relative flex size-[60px] shrink-0 items-center justify-center rounded-[20px]" style={{ background: GOLD }}>
+              <Store aria-hidden="true" className="size-[28px] text-[#1f1300]" />
+            </span>
+            <div className="relative flex-1">
+              <p className="text-[24px] font-bold leading-[1.25]">Ready to bring your shop to every doorstep?</p>
+              <p className="mt-[4px] text-[15px] text-white/75">Takes about a minute · No fees to apply</p>
+            </div>
+            {signedIn ? (
+              <button
+                type="button"
+                onClick={() => document.getElementById('sell-apply')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="relative inline-flex h-[52px] items-center gap-[8px] rounded-[16px] px-[26px] text-[16px] font-bold text-[#1f1300] transition-[filter] hover:brightness-95"
+                style={{ background: GOLD }}
+              >
+                Apply for early access <ArrowRight aria-hidden="true" className="size-[18px]" />
+              </button>
+            ) : (
+              <Link
+                href={loginHref(pathname)}
+                className="relative inline-flex h-[52px] items-center gap-[8px] rounded-[16px] px-[26px] text-[16px] font-bold text-[#1f1300] transition-[filter] hover:brightness-95"
+                style={{ background: GOLD }}
+              >
+                Sign in to apply <ArrowRight aria-hidden="true" className="size-[18px]" />
+              </Link>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

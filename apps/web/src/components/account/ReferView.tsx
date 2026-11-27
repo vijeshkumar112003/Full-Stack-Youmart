@@ -80,14 +80,15 @@ export function ReferView() {
 
   return (
     <>
-      <PageHeader title="Refer & Earn" subtitle="Invite friends to YouMart and earn 2.5% of their delivered orders in your wallet." />
+      <PageHeader title="Refer & Earn" icon={Gift} subtitle="Invite friends to YouMart and earn 2.5% of their delivered orders in your wallet." />
       {failed ? <Banner tone="error">Couldn&rsquo;t load your referral details. Please refresh the page.</Banner> : null}
 
       <div className="mb-[20px] grid gap-[20px] lg:grid-cols-[1.35fr_1fr]">
-        <div className="relative overflow-hidden rounded-[18px] bg-[linear-gradient(140deg,#0b1b3f_0%,#0142aa_55%,#7c3aed_100%)] p-[26px] font-ui text-white shadow-[0_16px_40px_rgba(1,66,170,0.3)]">
+        <div className="relative overflow-hidden rounded-[18px] bg-[linear-gradient(140deg,#0b1b3f_0%,#0142aa_55%,#7c3aed_100%)] p-[26px] font-ui text-white shadow-[0_16px_40px_rgba(1,66,170,0.3)] lg:rounded-[28px] lg:p-[30px]">
           <span aria-hidden="true" className="absolute -right-[50px] -top-[50px] size-[200px] rounded-full bg-white/10" />
           <Gift aria-hidden="true" className="absolute bottom-[18px] right-[22px] size-[90px] text-white/10" />
           <p className="relative text-[13px] font-semibold uppercase tracking-[0.12em] text-white/75">Your referral code</p>
+          <p className="relative mt-[4px] hidden text-[24px] font-bold leading-[1.25] lg:block">Give your friends YouMart,<br />get <span className="text-[#ffd60a]">2.5% back</span> on their orders.</p>
           {info ? (
             <div className="relative mt-[10px] flex flex-wrap items-center gap-[12px]">
               <span className="rounded-[12px] border-2 border-dashed border-white/50 bg-white/10 px-[18px] py-[8px] font-mono text-[28px] font-bold tracking-[0.12em]">
@@ -96,7 +97,7 @@ export function ReferView() {
               <button
                 type="button"
                 onClick={() => void copy('code')}
-                className="inline-flex h-[40px] items-center gap-[8px] rounded-[10px] bg-white px-[16px] text-[14px] font-semibold text-brand transition-transform hover:-translate-y-[1px]"
+                className="inline-flex h-[40px] items-center gap-[8px] rounded-[10px] bg-white px-[16px] text-[14px] font-semibold text-brand transition-transform hover:-translate-y-[1px] lg:h-[46px] lg:rounded-[14px] lg:font-bold"
               >
                 {copied === 'code' ? <Check aria-hidden="true" className="size-[16px]" /> : <Copy aria-hidden="true" className="size-[16px]" />}
                 {copied === 'code' ? 'Copied' : 'Copy code'}
@@ -110,14 +111,14 @@ export function ReferView() {
               href={whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-[40px] items-center gap-[8px] rounded-[10px] bg-[#25d366] px-[16px] text-[14px] font-semibold text-white"
+              className="inline-flex h-[40px] items-center gap-[8px] rounded-[10px] bg-[#25d366] px-[16px] text-[14px] font-semibold text-white lg:h-[46px] lg:rounded-[14px] lg:font-bold"
             >
               <Share2 aria-hidden="true" className="size-[16px]" /> Share on WhatsApp
             </a>
             <button
               type="button"
               onClick={() => void copy('link')}
-              className="inline-flex h-[40px] items-center gap-[8px] rounded-[10px] border border-white/40 px-[16px] text-[14px] font-semibold text-white hover:bg-white/10"
+              className="inline-flex h-[40px] items-center gap-[8px] rounded-[10px] border border-white/40 px-[16px] text-[14px] font-semibold text-white hover:bg-white/10 lg:h-[46px] lg:rounded-[14px] lg:font-bold"
             >
               {copied === 'link' ? <Check aria-hidden="true" className="size-[16px]" /> : <Copy aria-hidden="true" className="size-[16px]" />}
               {copied === 'link' ? 'Link copied' : 'Copy invite link'}
@@ -130,12 +131,12 @@ export function ReferView() {
             { label: 'Friends joined', value: info ? String(info.friendsJoined) : '—', Icon: Users },
             { label: 'Earned so far', value: rewards ? money(rewards.totalEarned) : '—', Icon: Wallet },
           ].map(({ label, value, Icon }) => (
-            <div key={label} className="flex flex-col justify-between rounded-[16px] border border-catalog-rule bg-white p-[18px] font-ui shadow-rail-card">
-              <span className="flex size-[40px] items-center justify-center rounded-[12px] bg-[#eef3fc] text-brand">
-                <Icon aria-hidden="true" className="size-[19px]" />
+            <div key={label} className="flex flex-col justify-between rounded-[16px] border border-catalog-rule bg-white p-[18px] font-ui shadow-rail-card lg:rounded-[24px] lg:border-brand-popup-border lg:p-[22px]">
+              <span className="flex size-[40px] items-center justify-center rounded-[12px] bg-[#eef3fc] text-brand lg:size-[48px] lg:rounded-[16px] lg:bg-[linear-gradient(140deg,#0142aa,#3b82f6)] lg:text-white">
+                <Icon aria-hidden="true" className="size-[19px] lg:size-[22px]" />
               </span>
               <div className="mt-[14px]">
-                <p className="text-[28px] font-bold tabular-nums text-heading">{value}</p>
+                <p className="text-[28px] font-bold tabular-nums text-heading lg:text-[34px]">{value}</p>
                 <p className="text-[13px] text-ink-muted">{label}</p>
               </div>
             </div>
@@ -149,10 +150,11 @@ export function ReferView() {
       </div>
 
       <Panel title="How it works">
-        <ol className="grid gap-[16px] md:grid-cols-3">
+        <ol className="relative grid gap-[16px] md:grid-cols-3">
+          <span aria-hidden="true" className="absolute left-[44px] right-[33%] top-[22px] hidden h-[2px] bg-[linear-gradient(90deg,#0142aa,#c7d7f5)] lg:block" />
           {STEPS.map(({ Icon, title, text }, i) => (
-            <li key={title} className="relative flex gap-[12px] font-ui">
-              <span className="flex size-[44px] shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-brand-button">
+            <li key={title} className="relative flex gap-[12px] font-ui lg:flex-col lg:gap-[10px]">
+              <span className="relative flex size-[44px] shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-brand-button lg:shadow-[0_0_0_6px_#ffffff,0_8px_16px_rgba(1,66,170,0.3)]">
                 <Icon aria-hidden="true" className="size-[20px]" />
               </span>
               <span>
@@ -208,8 +210,16 @@ export function ReferView() {
         ) : (
           <ul>
             {rewards.rewards.map((r) => (
-              <li key={r.rewardId} className="flex items-center justify-between gap-[12px] border-b border-catalog-rule px-[20px] py-[12px] font-ui last:border-0">
-                <span className="text-[14px] text-ink-muted">{dateTime(r.createdAt)}</span>
+              <li key={r.rewardId} className="flex items-center justify-between gap-[12px] border-b border-catalog-rule px-[20px] py-[12px] font-ui last:border-0 lg:px-[22px] lg:py-[14px]">
+                <span className="flex items-center gap-[12px]">
+                  <span className={`hidden size-[38px] items-center justify-center rounded-full lg:flex ${r.status === 'CREDITED' ? 'bg-[#e8f7ee] text-[#15803d]' : 'bg-[#f1f5f9] text-ink-muted'}`}>
+                    <Gift aria-hidden="true" className="size-[17px]" />
+                  </span>
+                  <span>
+                    <span className="hidden text-[14.5px] font-bold text-heading lg:block">Referral reward</span>
+                    <span className="text-[14px] text-ink-muted lg:text-[12.5px]">{dateTime(r.createdAt)}</span>
+                  </span>
+                </span>
                 <span className="flex items-center gap-[10px]">
                   <Pill tone={r.status === 'CREDITED' ? 'green' : 'grey'}>{r.status === 'CREDITED' ? 'Credited' : 'Reversed'}</Pill>
                   <strong className={`tabular-nums ${r.status === 'CREDITED' ? 'text-[#15803d]' : 'text-ink-muted line-through'}`}>
