@@ -33,7 +33,12 @@ export function PaymentMethods({
           const cod = method.id === 'cod';
           const unavailable = cod && !codAllowed;
           return (
-            <li key={method.id} className="relative mb-[20px] pl-[28px] font-sans leading-[32px]">
+            <li
+              key={method.id}
+              className={`relative mb-[12px] rounded-[16px] border py-[14px] pl-[46px] pr-[14px] font-sans leading-[32px] transition-colors ${
+                checked ? 'border-brand bg-[#f3f7fe] ring-1 ring-brand' : 'border-brand-popup-border bg-white hover:border-brand/50'
+              }`}
+            >
               <input
                 id={`payment-${method.id}`}
                 type="radio"
@@ -43,7 +48,7 @@ export function PaymentMethods({
                 onChange={() => onSelect(method.id)}
                 disabled={unavailable}
                 aria-describedby={`payment-${method.id}-box`}
-                className="absolute left-0 top-[1px] size-[20px] accent-brand"
+                className="absolute left-[16px] top-[16px] size-[20px] accent-brand"
               />
               <label
                 htmlFor={`payment-${method.id}`}
@@ -71,7 +76,7 @@ export function PaymentMethods({
               {checked && (
                 <div
                   id={`payment-${method.id}-box`}
-                  className="relative my-[14.72px] rounded-[10px] border border-catalog-qtyBorder bg-cart-payBox p-[13.4px] text-[13.4px] leading-[1.5] text-woo-noticeText before:absolute before:-top-[14.72px] before:left-[16px] before:border-[7.36px] before:border-transparent before:border-b-catalog-qtyBorder before:content-[''] lg:p-[14.72px] lg:text-[14.72px]"
+                  className="mt-[10px] rounded-[12px] bg-white p-[12px] text-[13.4px] leading-[1.5] text-ink-body ring-1 ring-brand-popup-border lg:text-[14px]"
                 >
                   {method.description}
                   {/* POLISH (W5, flagged): reassurance line under the Razorpay description. */}

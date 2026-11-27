@@ -57,7 +57,7 @@ interface AccountShellProps {
 }
 
 const LINK =
-  'group flex w-full items-center rounded-[8px] px-[12px] py-[9px] font-ui text-[15px] font-medium leading-[22px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand';
+  'group flex w-full items-center rounded-[12px] px-[12px] py-[9px] font-ui text-[14.5px] font-medium leading-[22px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand';
 
 // Desktop account layout: a sticky side menu grouped by what it's for (Shopping, Money, Account,
 // Support) as a 27% column from 922px, stacked full-width above the content below it.
@@ -76,10 +76,10 @@ export function AccountShell({ active, children, title, backHref = ROUTES.accoun
       </Link>
       <h1 className="max-w-[calc(100%-120px)] truncate font-ui text-[17px] font-bold text-heading">{label}</h1>
     </div>
-    <div className="mx-auto max-w-[1240px] px-[16px] pb-[24px] pt-[8px] lg:flex lg:items-start lg:justify-between lg:px-[20px] lg:pb-[64px] lg:pt-[56px]">
+    <div className="mx-auto max-w-[1240px] px-[16px] pb-[24px] pt-[8px] lg:flex lg:max-w-[1440px] lg:items-start lg:gap-[28px] lg:px-[32px] lg:pb-[48px] lg:pt-[28px]">
       <nav
         aria-label="Account pages"
-        className="mb-[20px] hidden rounded-[14px] border border-catalog-rule bg-white p-[12px] shadow-account-nav lg:sticky lg:top-[96px] lg:block lg:w-[27%]"
+        className="mb-[20px] hidden max-h-[calc(100vh-32px)] overflow-y-auto rounded-[24px] border border-brand-popup-border bg-white p-[12px] shadow-rail-card [scrollbar-width:thin] lg:sticky lg:top-[16px] lg:block lg:w-[280px] lg:shrink-0"
       >
         {GROUPS.map((group) => (
           <div key={group} className="mb-[6px] border-b border-catalog-rule pb-[8px] last:mb-0 last:border-0 last:pb-0">
@@ -91,8 +91,8 @@ export function AccountShell({ active, children, title, backHref = ROUTES.accoun
                 const Icon = ICONS[item.key];
                 const current = item.key === active;
                 const tone = current
-                  ? 'bg-brand text-white shadow-brand-button'
-                  : 'text-woo-navText hover:bg-[#eef3fc] hover:text-brand';
+                  ? 'bg-brand font-semibold text-white shadow-[0_6px_12px_rgba(1,66,170,0.3)]'
+                  : 'text-heading hover:bg-brand-popup-bg hover:text-brand';
                 const icon = (
                   <Icon
                     aria-hidden="true"
@@ -123,7 +123,7 @@ export function AccountShell({ active, children, title, backHref = ROUTES.accoun
           </div>
         ))}
       </nav>
-      <div className="ym-account min-w-0 lg:w-[70%]">{children}</div>
+      <div className="ym-account min-w-0 lg:flex-1">{children}</div>
     </div>
     </>
   );

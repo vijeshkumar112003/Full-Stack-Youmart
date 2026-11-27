@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Check, ChevronDown, Loader2, Lock, Zap } from 'lucide-react';
+import { Check, ChevronDown, Loader2, Lock, Tag, Zap } from 'lucide-react';
 import {
   ApiError,
   deliveryFee,
@@ -50,6 +50,7 @@ import { OrderPanel, OrderReviewTable, type ReviewRow } from './OrderReview';
 import { OrderReceived } from './OrderReceived';
 import { PaymentMethods } from './PaymentMethods';
 import { WalletOption } from './WalletOption';
+import { DESK_CARD, DESK_PILL, DeskCheckoutSteps, DeskItems, DeskTrust, StepCard, useDesktop, type DeskLine } from './DeskCheckout';
 
 type Phase =
   | { step: 'review' }
@@ -147,6 +148,9 @@ export function CheckoutView() {
   // W9: the YouMart Wallet - on by default when it has money (wallet first, Razorpay for any rest).
   const [wallet, setWallet] = useState<WalletSummary | null>(null);
   const [useWallet, setUseWallet] = useState(true);
+  // One layout at a time: the desktop step cards from 1025px, the phone page below.
+  const desk = useDesktop();
+  const pill = desk ? DESK_PILL : PILL;
 
   const addressId =
     chosenId && addresses?.some((a) => a.id === chosenId)
@@ -439,7 +443,7 @@ export function CheckoutView() {
     return <OrderReceived order={phase.order} placedAt={phase.placedAt} />;
   }
 
-  const steps = <CheckoutSteps current="Shop" active={2} centered />;
+  const steps = desk ? <DeskCheckoutSteps paying={false} /> : <CheckoutSteps current="Shop" active={2} centered />;
   if (!resumeChecked || session.status === 'loading' || (!order && cartEmpty)) {
     return (
       <>
@@ -491,7 +495,7 @@ export function CheckoutView() {
           Your payment is still being confirmed - this can take a minute. We&rsquo;ll show your
           receipt as soon as it lands; you won&rsquo;t be charged twice.
         </Notice>
-        <button type="button" onClick={() => void confirm(phase.order)} className={PILL}>
+        <button type="button" onClick={() => void confirm(phase.order)} className={pill}>
           Check payment status
         </button>
       </>
@@ -504,7 +508,7 @@ export function CheckoutView() {
           onClick={() => void pay(order)}
           disabled={phase.step === 'paying'}
           aria-busy={phase.step === 'paying' || undefined}
-          className={PILL}
+          className={pill}
         >
           {phase.step === 'paying' ? (
             <>
@@ -535,7 +539,7 @@ export function CheckoutView() {
         onClick={() => void placeOrder()}
         disabled={phase.step === 'placing'}
         aria-busy={phase.step === 'placing' || undefined}
-        className={PILL}
+        className={pill}
       >
         {phase.step === 'placing' ? (
           <>
@@ -550,6 +554,222 @@ export function CheckoutView() {
           'Place order'
         )}
       </button>
+    );
+  }
+
+  if (desk) {
+    const deskLines: DeskLine[] = order
+      ? order.items.map((item) => ({
+          key: item.skuId,
+          productId: item.productId,
+          title: item.title,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          lineTotal: item.lineTotal,
+        }))
+      : (cart?.items ?? []).map((line) => ({
+          key: line.cartItemId,
+          productId: line.productId,
+          title: line.title,
+          quantity: line.quantity,
+          unitPrice: line.priceSnapshot,
+          lineTotal: line.lineTotal,
+        }));
+    const itemCount = deskLines.reduce((n, l) => n + l.quantity, 0);
+    const freeShip = toPaise(totals.shipping) === 0;
+    // No address yet (and under the free-delivery amount): the charge isn't known.
+    const feeUnknown = !order && Boolean(cart) && deliveryFee(cart!.subtotal, shipAddress) === null;
+    const user = session.status === 'authenticated' ? session.user : null;
+    const saved = discount && discount.amount !== '0.00' ? discount : null;
+    return (
+      <>
+        <PlacingOrderModal open={phase.step === 'placing'} steps={placingSteps} />
+        <DeskCheckoutSteps paying={Boolean(order)} />
+        <div className="grid grid-cols-[minmax(0,1fr)_420px] items-start gap-[28px] pb-[24px] font-ui">
+          <div className="flex min-w-0 flex-col gap-[16px]">
+            <StepCard id="checkout-account" index={1} title="Account" done={loggedIn}>
+              {user ? (
+                <div className="flex items-center gap-[12px] rounded-[16px] bg-[#f8faff] px-[14px] py-[12px]">
+                  <span className="flex size-[42px] shrink-0 items-center justify-center rounded-full bg-brand text-[17px] font-bold text-white">
+                    {authUserLabel(user).charAt(0).toUpperCase()}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[12.5px] text-ink-muted">Logged in as</p>
+                    <p className="truncate text-[15px] font-bold text-heading">{authUserLabel(user)}</p>
+                  </div>
+                  {!order && (
+                    <LogoutButton className="rounded-full px-[12px] py-[6px] text-[13px] font-semibold text-brand hover:bg-brand-popup-bg">
+                      Not you? Log out
+                    </LogoutButton>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <p className={`${BODY_TEXT} mb-[15px]`}>
+                    Log in with your mobile number or email to continue - new customers get an account
+                    automatically. Your cart is kept.
+                  </p>
+                  <OtpLoginForm mode="login" returnTo="/checkout" bare />
+                </>
+              )}
+            </StepCard>
+
+            <StepCard
+              id="checkout-address"
+              index={2}
+              title="Deliver to"
+              done={Boolean(order) || Boolean(loggedIn && addressId)}
+            >
+              {order ? (
+                <address className="rounded-[16px] border border-brand bg-[#f3f7fe] px-[16px] py-[12px] text-[14.5px] not-italic leading-[1.55] text-ink-body">
+                  {addressLines(order.shippingAddress).map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </address>
+              ) : loggedIn && addresses ? (
+                <AddressPicker
+                  addresses={addresses}
+                  selectedId={addressId}
+                  onSelect={(id) => {
+                    setChosenId(id);
+                    setMessage(null);
+                  }}
+                  onAdded={async (address) => {
+                    await reloadAddresses();
+                    setChosenId(address.id);
+                    setMessage(null);
+                  }}
+                />
+              ) : loggedIn ? (
+                <div aria-busy="true" aria-label="Loading your addresses" className="min-h-[120px]" />
+              ) : (
+                <p className="text-[14.5px] text-ink-muted">Log in to choose a saved address or add a new one.</p>
+              )}
+            </StepCard>
+
+            <StepCard id="checkout-payment" index={3} title="Payment method" done={false}>
+              <div className="[&>div:first-child]:mt-0 [&>fieldset:first-child]:mt-0 [&>fieldset]:mb-0 [&>fieldset]:mt-[14px]">
+                {wallet && loggedIn ? (
+                  <WalletOption
+                    wallet={wallet}
+                    total={totals.total}
+                    on={useWallet}
+                    onChange={setUseWallet}
+                    disabled={busy || Boolean(order)}
+                    cod={codChosen}
+                  />
+                ) : null}
+                <PaymentMethods
+                  selected={payment === 'cod' && !codAvailable(totals.total) ? 'razorpay' : payment}
+                  onSelect={setPayment}
+                  disabled={busy}
+                  codAllowed={codAvailable(totals.total)}
+                />
+              </div>
+            </StepCard>
+
+            <StepCard
+              id="checkout-items"
+              index={4}
+              title={`Order summary (${itemCount} item${itemCount === 1 ? '' : 's'})`}
+              done={false}
+              right={
+                !order ? (
+                  <Link
+                    href="/cart"
+                    className="rounded-full bg-brand-popup-bg px-[14px] py-[6px] text-[13px] font-bold text-brand hover:bg-brand hover:text-white"
+                  >
+                    Edit cart
+                  </Link>
+                ) : null
+              }
+            >
+              {partial && !order ? (
+                <p className="mb-[12px] flex items-center gap-[8px] rounded-[12px] bg-brand-popup-bg px-[12px] py-[10px] text-[14px] font-semibold text-brand">
+                  <Zap aria-hidden="true" className="size-[16px] shrink-0" />
+                  Buying {cart?.items.length === 1 ? 'this item' : `these ${cart?.items.length} items`} only -
+                  the rest stay in your cart.
+                </p>
+              ) : null}
+              <DeskItems lines={deskLines} editable={!order && !busy} onQuantity={changeQuantity} />
+            </StepCard>
+          </div>
+
+          <aside aria-label="Price details" className="sticky top-[16px]">
+            <div className={`${DESK_CARD} p-[22px]`}>
+              <p className="mb-[14px] text-[12.5px] font-bold uppercase tracking-[1px] text-ink-muted">
+                Price details
+              </p>
+              {couponNote && !order && (
+                <p role="status" className="mb-[8px] text-[13px] font-semibold text-woo-error">
+                  {couponNote}
+                </p>
+              )}
+              {!order && cart && (
+                <CouponBox
+                  subtotal={totals.subtotal}
+                  cartItemIds={buyIds ? cart.items.map((line) => line.cartItemId) : undefined}
+                  applied={coupon}
+                  onChange={setCoupon}
+                  disabled={busy}
+                />
+              )}
+              <dl className="space-y-[12px] text-[14.5px]">
+                <div className="flex justify-between">
+                  <dt className="text-ink-body">
+                    Price ({itemCount} item{itemCount === 1 ? '' : 's'})
+                  </dt>
+                  <dd className="font-semibold text-heading">{formatMoney(totals.subtotal)}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-ink-body">Delivery</dt>
+                  {feeUnknown ? (
+                    <dd className="text-[13px] text-ink-muted">Select an address</dd>
+                  ) : (
+                    <dd className={freeShip ? 'font-bold text-[#28b463]' : 'font-semibold text-heading'}>
+                      {freeShip ? 'FREE' : formatMoney(totals.shipping)}
+                    </dd>
+                  )}
+                </div>
+                {saved ? (
+                  <div className="flex justify-between">
+                    <dt className="text-ink-body">Coupon{saved.code ? ` (${saved.code})` : ''}</dt>
+                    <dd className="font-semibold text-[#15803d]">&minus;{formatMoney(saved.amount)}</dd>
+                  </div>
+                ) : null}
+              </dl>
+              <div className="mt-[14px] flex items-baseline justify-between border-t border-dashed border-brand-popup-border pt-[14px]">
+                <span className="text-[17px] font-bold text-heading">Total amount</span>
+                <span className="text-[24px] font-bold text-brand">{formatMoney(totals.total)}</span>
+              </div>
+              {feeUnknown ? (
+                <p className="mt-[4px] text-right text-[12px] text-ink-muted">+ delivery for your address (free over ₹2,000)</p>
+              ) : null}
+              {saved ? (
+                <p className="mt-[12px] flex items-center gap-[8px] rounded-[12px] bg-[#e8f8ee] px-[12px] py-[9px] text-[13.5px] font-bold text-[#15803d]">
+                  <Tag aria-hidden="true" className="size-[15px]" /> You save {formatMoney(saved.amount)} on
+                  this order
+                </p>
+              ) : null}
+              <div className="mt-[16px]">
+                {notice ? <div className="mb-[12px]">{notice}</div> : null}
+                {action}
+              </div>
+              <p className="mt-[4px] text-[12px] leading-[1.5] text-ink-muted">
+                Your personal data will be used to process your order and support your experience, as
+                described in our{' '}
+                <Link href="/privacy-policy" className="font-semibold text-brand hover:underline">
+                  privacy policy
+                </Link>
+                .
+              </p>
+            </div>
+            <DeskTrust />
+          </aside>
+        </div>
+      </>
     );
   }
 

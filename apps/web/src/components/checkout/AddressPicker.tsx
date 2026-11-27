@@ -10,7 +10,6 @@ import {
   type AddressInput,
 } from '@youmart/shared-client';
 import { AddressForm } from '@/components/account/AddressForm';
-import { TEXT_LINK } from '@/components/account/formStyles';
 import { api } from '@/lib/api';
 
 interface AddressPickerProps {
@@ -37,7 +36,7 @@ export function AddressPicker({ addresses, selectedId, onSelect, onAdded }: Addr
 
   if (adding) {
     return (
-      <div className="rounded-[10px] border border-catalog-rule bg-white p-[15px] lg:p-[20px]">
+      <div className="rounded-[16px] border border-brand-popup-border bg-white p-[15px] lg:p-[20px]">
         <AddressForm
           title="Add a new address"
           initial={{ ...EMPTY_ADDRESS_FORM, isDefault: addresses.length === 0 }}
@@ -51,19 +50,19 @@ export function AddressPicker({ addresses, selectedId, onSelect, onAdded }: Addr
   return (
     <fieldset>
       <legend className="sr-only">Choose a delivery address</legend>
-      <ul className="grid gap-[12px]">
+      <ul className="grid gap-[12px] lg:grid-cols-2">
         {addresses.map((address) => {
           const selected = address.id === selectedId;
           const type =
             ADDRESS_TYPES.find((t) => t.value === address.addressType)?.label ??
             address.addressType;
           return (
-            <li key={address.id}>
+            <li key={address.id} className="flex">
               <label
-                className={`flex cursor-pointer gap-[12px] rounded-[10px] border bg-white p-[14px] transition-colors hover:bg-cart-rowHover ${
+                className={`flex w-full cursor-pointer gap-[12px] rounded-[16px] border p-[14px] transition-colors ${
                   selected
-                    ? 'border-brand bg-cart-rowHover ring-1 ring-brand'
-                    : 'border-catalog-rule'
+                    ? 'border-brand bg-[#f3f7fe] ring-1 ring-brand'
+                    : 'border-brand-popup-border bg-white hover:border-brand/50'
                 }`}
               >
                 <input
@@ -77,7 +76,7 @@ export function AddressPicker({ addresses, selectedId, onSelect, onAdded }: Addr
                 <span className="min-w-0 font-ui text-[14.6px] leading-[1.55] text-ink-body lg:text-[15px]">
                   <span className="mb-[2px] flex flex-wrap items-center gap-[8px]">
                     <strong className="text-heading">{address.fullName}</strong>
-                    <span className="rounded-[4px] border border-catalog-rule px-[6px] text-[11px] font-semibold uppercase tracking-[0.04em] text-brand">
+                    <span className="rounded-[6px] bg-brand-popup-bg px-[7px] text-[11px] font-semibold uppercase tracking-[0.04em] text-brand">
                       {type}
                     </span>
                     {address.isDefault && (
@@ -102,7 +101,7 @@ export function AddressPicker({ addresses, selectedId, onSelect, onAdded }: Addr
       <button
         type="button"
         onClick={() => setAdding(true)}
-        className={`mt-[14px] inline-flex items-center gap-[6px] font-ui text-[15px] font-semibold ${TEXT_LINK}`}
+        className="mt-[12px] flex w-full items-center justify-center gap-[6px] rounded-[16px] border-2 border-dashed border-brand-popup-border py-[12px] font-ui text-[14.5px] font-bold text-brand transition-colors hover:border-brand hover:bg-brand-popup-bg"
       >
         <Plus aria-hidden="true" className="size-[16px]" strokeWidth={2.5} />
         Add a new address

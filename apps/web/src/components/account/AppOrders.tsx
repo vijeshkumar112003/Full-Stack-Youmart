@@ -43,8 +43,8 @@ import { skipImageOptimizer } from '@/lib/images';
 // the Order placed -> Packed -> Shipped -> Delivered tracker, its products (photo, ×qty, Rate,
 // Buy again), "+ N more", and the order number, date, payment pill and total.
 
-type Filter = 'all' | 'active' | 'delivered' | 'cancelled' | 'returned';
-const FILTERS: { key: Filter; label: string }[] = [
+export type Filter = 'all' | 'active' | 'delivered' | 'cancelled' | 'returned';
+export const FILTERS: { key: Filter; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'active', label: 'On the way' },
   { key: 'delivered', label: 'Delivered' },
@@ -52,8 +52,8 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: 'returned', label: 'Returned' },
 ];
 
-type Tone = { fg: string; bg: string; icon: LucideIcon };
-const TONES = {
+export type Tone = { fg: string; bg: string; icon: LucideIcon };
+export const TONES = {
   green: { fg: '#15803d', bg: '#e8f7ee', icon: CircleCheck },
   blue: { fg: '#1d4ed8', bg: '#e9f0ff', icon: Package },
   violet: { fg: '#6d28d9', bg: '#f1ebff', icon: Car },
@@ -62,7 +62,7 @@ const TONES = {
   grey: { fg: '#475569', bg: '#eef1f5', icon: Undo2 },
 } satisfies Record<string, Tone>;
 
-const STEP: Record<SellerItemStatus, number> = {
+export const STEP: Record<SellerItemStatus, number> = {
   PENDING: 0,
   CONFIRMED: 0,
   PACKED: 1,
@@ -72,13 +72,13 @@ const STEP: Record<SellerItemStatus, number> = {
   RETURNED: -1,
 };
 
-const day = (iso: string) => new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short' }).format(new Date(iso));
-const fullDate = (iso: string) =>
+export const day = (iso: string) => new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short' }).format(new Date(iso));
+export const fullDate = (iso: string) =>
   new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso));
-const monthKey = (iso: string) => new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric' }).format(new Date(iso));
+export const monthKey = (iso: string) => new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric' }).format(new Date(iso));
 
-const lines = (o: OrderListItem): OrderListLine[] => o.lines ?? [];
-const shownLines = (o: OrderListItem): OrderListLine[] => {
+export const lines = (o: OrderListItem): OrderListLine[] => o.lines ?? [];
+export const shownLines = (o: OrderListItem): OrderListLine[] => {
   const live = lines(o).filter((l) => l.sellerStatus !== 'CANCELLED');
   return live.length > 0 ? live : lines(o);
 };
@@ -89,7 +89,7 @@ const latest = (ls: OrderListLine[], s: SellerItemStatus) =>
     .sort()
     .pop();
 
-function bucket(o: OrderListItem): Exclude<Filter, 'all'> {
+export function bucket(o: OrderListItem): Exclude<Filter, 'all'> {
   if (o.status === 'CANCELLED') return 'cancelled';
   const ls = lines(o);
   if (ls.length > 0 && ls.every((l) => l.sellerStatus === 'CANCELLED')) return 'cancelled';
@@ -98,7 +98,7 @@ function bucket(o: OrderListItem): Exclude<Filter, 'all'> {
   return 'active';
 }
 
-function headline(o: OrderListItem): { text: string; sub: string | null; tone: Tone } {
+export function headline(o: OrderListItem): { text: string; sub: string | null; tone: Tone } {
   const ls = lines(o);
   const b = bucket(o);
   if (o.status === 'PENDING_PAYMENT') return { text: 'Payment pending', sub: 'Complete payment to confirm', tone: TONES.orange };
@@ -122,7 +122,7 @@ function headline(o: OrderListItem): { text: string; sub: string | null; tone: T
   return { text: label === 'Processing' ? 'Order confirmed' : label, sub: 'Seller is preparing it', tone: TONES.blue };
 }
 
-function lineLabel(l: OrderListLine): string {
+export function lineLabel(l: OrderListLine): string {
   switch (l.sellerStatus) {
     case 'DELIVERED':
       return `Delivered on ${day(l.updatedAt)}`;
@@ -139,15 +139,14 @@ function lineLabel(l: OrderListLine): string {
   }
 }
 
-type Card = { image: string | null; slug: string };
+export type Card = { image: string | null; slug: string };
 
-export function AppOrders() {
+/** The signed-in customer's orders (paged), their product photos, counts and the filtered groups. */
+export function useOrderList(filter: Filter, query: string) {
   const [orders, setOrders] = useState<OrderListItem[] | null>(null);
   const [cursor, setCursor] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [cards, setCards] = useState<Record<string, Card>>({});
-  const [filter, setFilter] = useState<Filter>('all');
-  const [query, setQuery] = useState('');
   const asked = useRef(new Set<string>());
 
   const loadCards = useCallback((list: OrderListItem[]) => {
@@ -210,6 +209,14 @@ export function AppOrders() {
     }
     return groups;
   }, [orders, filter, query]);
+
+  return { orders, cursor, loadingMore, loadMore, cards, counts, sections };
+}
+
+export function AppOrders() {
+  const [filter, setFilter] = useState<Filter>('all');
+  const [query, setQuery] = useState('');
+  const { orders, cursor, loadingMore, loadMore, cards, counts, sections } = useOrderList(filter, query);
 
   if (!orders) {
     return (
@@ -300,7 +307,7 @@ export function AppOrders() {
   );
 }
 
-function OrderCard({ order, cards }: { order: OrderListItem; cards: Record<string, Card> }) {
+export function OrderCard({ order, cards }: { order: OrderListItem; cards: Record<string, Card> }) {
   const [expanded, setExpanded] = useState(false);
   const ls = shownLines(order);
   const cancelledCount = lines(order).length - ls.length;

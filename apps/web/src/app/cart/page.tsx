@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { CategoryBar } from '@/components/category/CategoryBar';
-import { CheckoutSteps } from '@/components/listing/CheckoutSteps';
-import { CartView } from '@/components/cart/CartView';
+import { DeskCart } from '@/components/cart/DeskCart';
 import { AppCart } from '@/components/cart/AppCart';
 import { categoryBarMains } from '@/lib/category-taxonomy';
 
@@ -15,13 +14,9 @@ export default function CartPage() {
       <div className="lg:hidden">
         <AppCart />
       </div>
-      {/* Live stepper tops: 143 (390), 169.2 (768), 167.2 (900), 605 (1366). */}
-      <div className="mx-auto mt-[12px] hidden lg:block max-w-[1240px] px-[20px] min-[768px]:mt-[68px] min-[769px]:mt-[66px] min-[1025px]:mb-[64px] min-[1025px]:mt-[20px]">
-        <CheckoutSteps current="Shop" active={1} centered />
-        <h1 className="sr-only">Cart</h1>
-        <div className="lg:px-[20px]">
-          <CartView />
-        </div>
+      {/* Desktop: the app's My Cart laid out for a wide screen. */}
+      <div className="mx-auto hidden max-w-[1440px] px-[32px] pb-[24px] pt-[24px] lg:block">
+        <DeskCart />
       </div>
     </>
   );

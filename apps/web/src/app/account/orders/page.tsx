@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { AccountShell } from '@/components/account/AccountShell';
-import { OrdersList } from '@/components/account/OrdersList';
+import { DeskOrders } from '@/components/account/DeskOrders';
 import { AppOrders } from '@/components/account/AppOrders';
 import { RequireAuth } from '@/components/account/RequireAuth';
 
@@ -10,12 +10,12 @@ export default function OrdersPage() {
   return (
     <RequireAuth>
       <AccountShell active="orders">
-        <h1 className="sr-only">Orders</h1>
+        <h1 className="sr-only lg:hidden">Orders</h1>
         <div className="lg:hidden">
           <AppOrders />
         </div>
         <div className="hidden lg:block">
-          <OrdersList />
+          <DeskOrders />
         </div>
       </AccountShell>
     </RequireAuth>

@@ -13,8 +13,8 @@ export default function CheckoutPage() {
     <>
       <CategoryBar mains={categoryBarMains()} />
       {/* Same offsets as /cart: live's steps bar sits at 143 / 169.2 / 167.2 / 605. */}
-      <div className="mx-auto mt-[12px] max-w-[1240px] px-[20px] min-[768px]:mt-[68px] min-[769px]:mt-[66px] min-[1025px]:mb-[32px] min-[1025px]:mt-[20px]">
-        <h1 className="sr-only">Checkout</h1>
+      <div className="mx-auto mt-[12px] max-w-[1240px] px-[20px] min-[768px]:mt-[68px] min-[769px]:mt-[66px] lg:mb-[24px] lg:mt-[24px] lg:max-w-[1440px] lg:px-[32px]">
+        <h1 className="sr-only lg:hidden">Checkout</h1>
         {/* CheckoutView reads ?buy= (useSearchParams), which needs a Suspense boundary. */}
         <Suspense fallback={<div aria-busy="true" className="min-h-[480px]" />}>
           <CheckoutView />
