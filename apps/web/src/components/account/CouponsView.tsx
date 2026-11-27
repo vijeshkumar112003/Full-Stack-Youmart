@@ -6,6 +6,9 @@ import { Check, Copy } from 'lucide-react';
 import type { AvailableCoupon } from '@youmart/shared-client';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
+import { useCart } from '@/lib/cart';
+import { useDesktop } from '@/components/checkout/DeskCheckout';
+import { DeskCoupons } from './DeskCoupons';
 import { Notice } from './Notice';
 import { BODY_TEXT, TEXT_LINK } from './formStyles';
 
@@ -20,17 +23,26 @@ export function CouponsView() {
   const [items, setItems] = useState<AvailableCoupon[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const desk = useDesktop();
+  const { mode, cart } = useCart();
+  // With items in the cart each offer says whether it fits it (shown on desktop).
+  const subtotal = cart && cart.items.length > 0 ? cart.subtotal : null;
 
   useEffect(() => {
-    if (session.status === 'loading') return;
+    if (session.status === 'loading' || mode === 'loading') return;
+    let active = true;
     api.orders
-      .coupons()
-      .then((r) => setItems(r.items))
-      .catch(() => setFailed(true));
-  }, [session.status]);
+      .coupons(subtotal ?? undefined)
+      .then((r) => active && setItems(r.items))
+      .catch(() => active && setFailed(true));
+    return () => {
+      active = false;
+    };
+  }, [session.status, mode, subtotal]);
 
   if (failed) return <Notice tone="error">We could not load the offers. Please try again.</Notice>;
   if (!items) return <div aria-busy="true" className="min-h-[240px]" />;
+  if (desk) return <DeskCoupons items={items} cartSubtotal={subtotal} />;
   if (items.length === 0) {
     return <p className={BODY_TEXT}>No offers right now - check back soon.</p>;
   }

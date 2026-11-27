@@ -48,6 +48,7 @@ import { CouponBox } from './CouponBox';
 import { PLACING_STEP_MS, PlacingOrderModal, atLeast } from './PlacingOrderModal';
 import { OrderPanel, OrderReviewTable, type ReviewRow } from './OrderReview';
 import { OrderReceived } from './OrderReceived';
+import { DeskOrderReceived } from './DeskOrderReceived';
 import { PaymentMethods } from './PaymentMethods';
 import { WalletOption } from './WalletOption';
 import { DESK_CARD, DESK_PILL, DeskCheckoutSteps, DeskItems, DeskTrust, StepCard, useDesktop, type DeskLine } from './DeskCheckout';
@@ -440,7 +441,11 @@ export function CheckoutView() {
   }, [resumeChecked, order, phase.step, cart, router]);
 
   if (phase.step === 'done') {
-    return <OrderReceived order={phase.order} placedAt={phase.placedAt} />;
+    return desk ? (
+      <DeskOrderReceived order={phase.order} placedAt={phase.placedAt} />
+    ) : (
+      <OrderReceived order={phase.order} placedAt={phase.placedAt} />
+    );
   }
 
   const steps = desk ? <DeskCheckoutSteps paying={false} /> : <CheckoutSteps current="Shop" active={2} centered />;
