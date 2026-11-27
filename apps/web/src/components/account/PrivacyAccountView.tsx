@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, ChevronRight, FileText, Loader2, RotateCcw, ShieldCheck, Trash2, Truck } from 'lucide-react';
+import { AlertTriangle, Archive, Bell, ChevronRight, CreditCard, EyeOff, FileText, Loader2, MapPin, MonitorSmartphone, RotateCcw, ShieldCheck, SlidersHorizontal, Trash2, Truck, UserRound } from 'lucide-react';
 import { ApiError, ROUTES, formatMoney, type AccountDeletionCheck } from '@youmart/shared-client';
 import { api } from '@/lib/api';
 import { logout } from '@/lib/session';
@@ -55,7 +55,25 @@ export function PrivacyAccountView() {
 
   return (
     <>
-      <PageHeader title="Privacy & account" subtitle="Our policies, and control over your account and data." />
+      <PageHeader title="Privacy & account" icon={ShieldCheck} subtitle="Our policies, and control over your account and data." />
+
+      <ul className="mb-[20px] hidden grid-cols-3 gap-[14px] font-ui lg:grid">
+        {[
+          { Icon: EyeOff, title: 'We never sell your data', text: 'Your details are used only to deliver orders and support you.' },
+          { Icon: CreditCard, title: 'Payments stay with Razorpay', text: 'YouMart never sees your card or UPI details.' },
+          { Icon: SlidersHorizontal, title: 'You are in control', text: 'Choose what we send, sign out devices, delete your account.' },
+        ].map(({ Icon, title, text }) => (
+          <li key={title} className="flex items-start gap-[14px] rounded-[20px] border border-brand-popup-border bg-white p-[18px] shadow-rail-card">
+            <span className="flex size-[44px] shrink-0 items-center justify-center rounded-[14px] bg-[#e8f8ee] text-[#15803d]">
+              <Icon aria-hidden="true" className="size-[20px]" />
+            </span>
+            <span>
+              <span className="block text-[15px] font-bold text-heading">{title}</span>
+              <span className="mt-[2px] block text-[13px] leading-[1.5] text-ink-muted">{text}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
 
       <Panel title="Policies">
         <ul className="grid gap-[10px] md:grid-cols-2">
@@ -63,9 +81,9 @@ export function PrivacyAccountView() {
             <li key={href}>
               <Link
                 href={href}
-                className="group flex items-center gap-[12px] rounded-[12px] border border-catalog-rule p-[14px] font-ui transition-colors hover:border-brand"
+                className="group flex items-center gap-[12px] rounded-[12px] border border-catalog-rule p-[14px] font-ui transition-colors hover:border-brand lg:rounded-[18px] lg:border-brand-popup-border lg:p-[16px] lg:hover:bg-brand-popup-bg"
               >
-                <span className="flex size-[40px] items-center justify-center rounded-[10px] bg-[#eef3fc] text-brand">
+                <span className="flex size-[40px] items-center justify-center rounded-[10px] bg-[#eef3fc] text-brand lg:size-[46px] lg:rounded-[14px] lg:bg-[linear-gradient(140deg,#0142aa,#3b82f6)] lg:text-white">
                   <Icon aria-hidden="true" className="size-[19px]" />
                 </span>
                 <span className="min-w-0 flex-1">
@@ -80,6 +98,22 @@ export function PrivacyAccountView() {
       </Panel>
 
       <Panel title="Your data">
+        <ul className="mb-[14px] hidden grid-cols-4 gap-[10px] font-ui lg:grid">
+          {[
+            { href: `${ROUTES.notifications}?tab=settings`, Icon: Bell, label: 'Notification settings', sub: 'WhatsApp & email' },
+            { href: ROUTES.devices, Icon: MonitorSmartphone, label: 'Signed-in devices', sub: 'Sign out anywhere' },
+            { href: ROUTES.addresses, Icon: MapPin, label: 'Saved addresses', sub: 'Edit or delete' },
+            { href: ROUTES.accountDetails, Icon: UserRound, label: 'Account details', sub: 'Name, phone, email' },
+          ].map(({ href, Icon, label, sub }) => (
+            <li key={label}>
+              <Link href={href} className="group flex h-full flex-col gap-[8px] rounded-[16px] bg-[#f8faff] p-[14px] transition-colors hover:bg-brand-popup-bg">
+                <Icon aria-hidden="true" className="size-[20px] text-brand" />
+                <span className="text-[14px] font-bold text-heading group-hover:text-brand">{label}</span>
+                <span className="text-[12px] text-ink-muted">{sub}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
         <p className="font-ui text-[14.5px] leading-[1.6] text-ink-body">
           We use your name, contact details and addresses only to deliver your orders and support you.
           Manage what we send you under{' '}
@@ -94,12 +128,29 @@ export function PrivacyAccountView() {
         </p>
       </Panel>
 
-      <section className="rounded-[14px] border border-[#f5c2c2] bg-white shadow-rail-card">
-        <div className="flex items-center gap-[10px] border-b border-[#f5c2c2] bg-[#fdf6f6] px-[20px] py-[14px] rounded-t-[14px]">
-          <Trash2 aria-hidden="true" className="size-[18px] text-woo-error" />
-          <h2 className="font-ui text-[16.5px] font-semibold text-[#991b1b]">Delete account</h2>
+      <section className="rounded-[14px] border border-[#f5c2c2] bg-white shadow-rail-card lg:rounded-[24px]">
+        <div className="flex items-center gap-[10px] rounded-t-[14px] border-b border-[#f5c2c2] bg-[#fdf6f6] px-[20px] py-[14px] lg:rounded-t-[24px] lg:px-[22px] lg:py-[16px]">
+          <span className="flex size-[34px] items-center justify-center rounded-[10px] bg-[#fee2e2]">
+            <Trash2 aria-hidden="true" className="size-[17px] text-woo-error" />
+          </span>
+          <h2 className="font-ui text-[16.5px] font-semibold text-[#991b1b] lg:text-[18px] lg:font-bold">Delete account</h2>
+          <span className="ml-auto hidden rounded-full bg-[#fee2e2] px-[10px] py-[2px] font-ui text-[12px] font-bold text-[#b91c1c] lg:inline">Permanent</span>
         </div>
-        <div className="p-[20px] font-ui text-[14.5px] leading-[1.6] text-ink-body">
+        <div className="p-[20px] font-ui text-[14.5px] leading-[1.6] text-ink-body lg:p-[22px]">
+          <div className="mb-[14px] hidden grid-cols-2 gap-[12px] lg:grid">
+            <div className="rounded-[16px] bg-[#fdf6f6] p-[14px]">
+              <p className="mb-[6px] flex items-center gap-[6px] text-[13.5px] font-bold text-[#991b1b]">
+                <Trash2 aria-hidden="true" className="size-[14px]" /> Removed for good
+              </p>
+              <p className="text-[13px] text-ink-body">Your profile, saved addresses, wishlist, reviews and wallet balance.</p>
+            </div>
+            <div className="rounded-[16px] bg-[#f8faff] p-[14px]">
+              <p className="mb-[6px] flex items-center gap-[6px] text-[13.5px] font-bold text-heading">
+                <Archive aria-hidden="true" className="size-[14px] text-brand" /> Kept (required by law)
+              </p>
+              <p className="text-[13px] text-ink-body">Order and invoice records - without your contact details.</p>
+            </div>
+          </div>
           <p>
             Deleting your account permanently removes your profile, saved addresses, wishlist and
             reviews. Order and invoice records we must keep by law are kept, without your contact

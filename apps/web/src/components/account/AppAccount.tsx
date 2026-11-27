@@ -44,7 +44,7 @@ import { logout, useSession } from '@/lib/session';
 // profile, the wallet (or a sign-in card) floating over it, quick tiles, Sell / Advertise, and the
 // grouped menu rows.
 
-const TINT = {
+export const TINT = {
   blue: { bg: '#e8f0fe', fg: '#0142aa' },
   green: { bg: '#e7f6ee', fg: '#1e8e4f' },
   amber: { bg: '#fff4e0', fg: '#c77700' },
@@ -53,9 +53,9 @@ const TINT = {
   teal: { bg: '#e3f6f6', fg: '#13878a' },
   slate: { bg: '#eef1f5', fg: '#4a5568' },
 } as const;
-type Tint = keyof typeof TINT;
+export type Tint = keyof typeof TINT;
 
-interface Item {
+export interface Item {
   icon: LucideIcon;
   label: string;
   tint: Tint;
@@ -63,12 +63,12 @@ interface Item {
   auth?: boolean;
 }
 
-const REMINDERS: Item[] = [
+export const REMINDERS: Item[] = [
   { icon: AlarmClock, label: 'Remind me to buy', tint: 'amber', href: ROUTES.reminders, auth: true },
   { icon: Bell, label: 'Alerts', tint: 'blue', href: ROUTES.notifications, auth: true },
   { icon: SlidersHorizontal, label: 'Notification settings', tint: 'violet', href: `${ROUTES.notifications}?tab=settings`, auth: true },
 ];
-const ACTIVITY: Item[] = [
+export const ACTIVITY: Item[] = [
   { icon: Gift, label: 'Refer & Earn', tint: 'violet', href: ROUTES.refer },
   { icon: Navigation, label: 'Track an order', tint: 'blue', href: ROUTES.trackOrder },
   { icon: MapPin, label: 'Saved addresses', tint: 'teal', href: ROUTES.addresses, auth: true },
@@ -77,11 +77,11 @@ const ACTIVITY: Item[] = [
   { icon: Clock, label: 'Recently viewed', tint: 'violet', href: ROUTES.recentlyViewed },
   { icon: Star, label: 'My reviews', tint: 'amber', href: ROUTES.myReviews, auth: true },
 ];
-const SETTINGS: Item[] = [
+export const SETTINGS: Item[] = [
   { icon: User, label: 'Account details', tint: 'violet', href: ROUTES.accountDetails, auth: true },
   { icon: ShieldCheck, label: 'Privacy & account', tint: 'green', href: ROUTES.privacy, auth: true },
 ];
-const INFO: Item[] = [
+export const INFO: Item[] = [
   { icon: Info, label: 'About YouMart', tint: 'blue', href: '/about' },
   { icon: Phone, label: 'Contact us', tint: 'teal', href: ROUTES.contact },
   { icon: Headset, label: 'Customer care', tint: 'violet', href: ROUTES.customerCare },
@@ -91,7 +91,7 @@ const INFO: Item[] = [
   { icon: FileText, label: 'Terms & conditions', tint: 'slate', href: '/terms' },
   { icon: Lock, label: 'Privacy policy', tint: 'rose', href: '/privacy-policy' },
 ];
-const QUICK: (Item & { sub: string })[] = [
+export const QUICK: (Item & { sub: string })[] = [
   { icon: ShoppingBag, label: 'Orders', sub: 'Track & manage', tint: 'blue', href: ROUTES.orders, auth: true },
   { icon: Bookmark, label: 'Favourites', sub: 'Saved items', tint: 'rose', href: ROUTES.wishlist },
   { icon: Tags, label: 'Coupons', sub: 'Offers for you', tint: 'green', href: ROUTES.coupons },

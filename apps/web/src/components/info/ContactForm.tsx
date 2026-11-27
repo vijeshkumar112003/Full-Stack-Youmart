@@ -49,14 +49,15 @@ export function ContactForm() {
       onSubmit={onSubmit}
       noValidate
       aria-labelledby={`${id}-title`}
-      className="rounded-[10px] border border-catalog-rule bg-white p-[20px]"
+      className="rounded-[10px] border border-catalog-rule bg-white p-[20px] lg:rounded-[28px] lg:border-brand-popup-border lg:p-[30px] lg:shadow-rail-card"
     >
       <h2
         id={`${id}-title`}
-        className="mb-[16px] font-ui text-[20px] font-semibold uppercase leading-[1.3] text-heading lg:text-[25px]"
+        className="mb-[16px] font-ui text-[20px] font-semibold uppercase leading-[1.3] text-heading lg:mb-[4px] lg:text-[24px] lg:font-bold lg:normal-case"
       >
         Send Us a Message
       </h2>
+      <p className="mb-[18px] hidden font-ui text-[14px] text-ink-muted lg:block">We usually reply within a day. For order issues, WhatsApp is fastest.</p>
       {sent !== null && (
         <Notice tone="success">
           Thank you! Your message has been received (reference <strong>{sent}</strong>). Our team

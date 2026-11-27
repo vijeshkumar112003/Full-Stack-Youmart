@@ -4,6 +4,9 @@ import {
   ArrowRight,
   Bike,
   CircleHelp,
+  Clock,
+  LifeBuoy,
+  Sparkles,
   Headset,
   Mail,
   MapPin,
@@ -55,6 +58,7 @@ const QUICK = [
   { icon: Undo2, label: 'Returns & refunds', href: '/refund-policy' },
   { icon: Bike, label: 'Delivery charges', href: '/shipping' },
   { icon: MessagesSquare, label: 'Contact form', href: '/contact' },
+  { icon: LifeBuoy, label: 'Raise a request', href: '/account/help' },
   { icon: CircleHelp, label: 'FAQs', href: '/faq' },
 ] as const;
 
@@ -67,6 +71,8 @@ export default function CustomerCarePage() {
           aria-hidden="true"
           className="absolute -right-[60px] -top-[90px] size-[260px] rounded-full bg-white/[0.07]"
         />
+        <div className="lg:flex lg:items-center lg:gap-[40px]">
+        <div className="lg:flex-1">
         <span className="flex size-[52px] items-center justify-center rounded-[16px] border border-white/30 bg-white/15">
           <Headset aria-hidden="true" className="size-[26px]" />
         </span>
@@ -81,6 +87,25 @@ export default function CustomerCarePage() {
           <span className="rounded-full bg-white/15 px-[12px] py-[5px]">
             Real people on WhatsApp, call &amp; email
           </span>
+        </div>
+        </div>
+        <ul className="mt-[24px] hidden w-[340px] shrink-0 space-y-[10px] font-ui lg:block">
+          {[
+            { Icon: Sparkles, title: 'Instant answers', text: 'Yumo, our AI assistant - any time' },
+            { Icon: Clock, title: 'Quick replies on WhatsApp', text: 'Our team picks up your chat' },
+            { Icon: LifeBuoy, title: 'Help requests', text: 'Usually answered within 24 hours' },
+          ].map(({ Icon, title, text }) => (
+            <li key={title} className="flex items-center gap-[12px] rounded-[18px] bg-white/10 px-[14px] py-[12px] ring-1 ring-white/15">
+              <span className="flex size-[40px] shrink-0 items-center justify-center rounded-[12px] bg-white text-brand">
+                <Icon aria-hidden="true" className="size-[19px]" />
+              </span>
+              <span>
+                <span className="block text-[14.5px] font-bold">{title}</span>
+                <span className="block text-[12.5px] text-white/75">{text}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
         </div>
       </section>
 
@@ -137,7 +162,7 @@ export default function CustomerCarePage() {
       <h2 className="mt-[40px] font-ui text-[13px] font-bold uppercase tracking-[0.12em] text-[#8a95ab]">
         Quick help
       </h2>
-      <ul className="mt-[14px] grid grid-cols-2 gap-[12px] sm:grid-cols-3 lg:grid-cols-6">
+      <ul className="mt-[14px] grid grid-cols-2 gap-[12px] sm:grid-cols-3 lg:grid-cols-7">
         {QUICK.map(({ icon: Icon, label, href }) => (
           <li key={label}>
             <Link
@@ -157,7 +182,15 @@ export default function CustomerCarePage() {
       <h2 className="mt-[40px] font-ui text-[13px] font-bold uppercase tracking-[0.12em] text-[#8a95ab]">
         Visit us
       </h2>
-      <div className="mt-[14px] flex flex-col gap-[14px] rounded-[22px] bg-white p-[20px] ring-1 ring-[#e2e9f6] sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-[14px] overflow-hidden rounded-[22px] bg-white ring-1 ring-[#e2e9f6] lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:rounded-[28px]">
+      <iframe
+        title={`Map: ${BUSINESS.address}`}
+        src={BUSINESS.mapEmbedSrc}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        className="hidden h-full min-h-[220px] w-full border-0 lg:order-2 lg:block"
+      />
+      <div className="flex flex-col gap-[14px] p-[20px] sm:flex-row sm:items-center sm:justify-between lg:flex-col lg:items-start lg:justify-center lg:p-[32px]">
         <div className="flex items-center gap-[12px]">
           <span className="flex size-[44px] shrink-0 items-center justify-center rounded-[14px] bg-[#ffe4e6]">
             <MapPin aria-hidden="true" className="size-[22px] text-[#e11d48]" />
@@ -174,6 +207,7 @@ export default function CustomerCarePage() {
         >
           Open in Maps
         </a>
+      </div>
       </div>
     </div>
   );

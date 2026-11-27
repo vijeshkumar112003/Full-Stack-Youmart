@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Home, Package, PartyPopper, ShieldCheck, Sparkles, Sprout, Tags, Truck } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Eye, Headset, Home, Package, PartyPopper, ShieldCheck, Sparkles, Sprout, Tags, Target, Truck, Wallet } from 'lucide-react';
 import Link from 'next/link';
 import { ABOUT_PAGE } from '@youmart/shared-client';
 import { RichText } from '@/components/info/RichText';
@@ -53,7 +53,7 @@ export default function AboutPage() {
             { Icon: PartyPopper, title: 'Celebrations', text: 'Party, gifts and festival decor' },
             { Icon: Home, title: 'Everyday needs', text: 'Kitchen, cleaning and stationery' },
           ].map(({ Icon, title, text }) => (
-            <li key={title} className="rounded-[18px] border border-catalog-rule bg-white p-[20px] shadow-rail-card">
+            <li key={title} className="rounded-[18px] border border-catalog-rule bg-white p-[20px] shadow-rail-card lg:rounded-[24px] lg:border-brand-popup-border">
               <span className="flex size-[46px] items-center justify-center rounded-[14px] bg-[#eef3fc] text-brand">
                 <Icon aria-hidden="true" className="size-[22px]" />
               </span>
@@ -64,7 +64,7 @@ export default function AboutPage() {
         </ul>
         <div>
           <p className={`${EYEBROW} text-heading`}>{intro.eyebrow}</p>
-          <h2 className={`${H2} mt-[10px]`}>{intro.title}</h2>
+          <h2 className={`${H2} mt-[10px] lg:normal-case lg:font-bold`}>{intro.title}</h2>
           <h3 className="mt-[30px] font-ui text-[16px] font-semibold uppercase leading-[1.2] text-heading lg:text-[17px]">
             {intro.subtitle}
           </h3>
@@ -76,42 +76,74 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Live sets white copy on #a79d9e (about 2.6:1); the copy is dark here for contrast. */}
-      <section className="bg-info-missionBg">
-        <div className="mx-auto flex max-w-[1000px] flex-col gap-[30px] px-[20px] py-[50px] lg:flex-row lg:py-[85px]">
-          <div className="lg:w-[229px] lg:shrink-0">
-            <p className={`${EYEBROW} text-heading`}>{missionVision.eyebrow}</p>
-            <h2 className="mt-[4px] font-ui text-[24px] font-semibold uppercase leading-[1.3] text-heading">
-              {missionVision.title}
-            </h2>
-          </div>
-          <div className="grid gap-[40px]">
-            {missionVision.items.map((item) => (
-              <div key={item.title}>
-                <h3 className={H2}>{item.title}</h3>
-                <p className={`${BODY} mt-[10px] text-heading`}>
-                  <RichText text={item.text} />
-                </p>
-              </div>
-            ))}
+      {/* Mission & vision as cards. */}
+      <section className="bg-[#f3f7fe]">
+        <div className="mx-auto max-w-[1240px] px-[20px] py-[50px] lg:py-[80px]">
+          <p className={`${EYEBROW} text-center text-brand`}>{missionVision.eyebrow}</p>
+          <h2 className="mt-[8px] text-center font-ui text-[28px] font-bold leading-[1.25] text-heading lg:text-[36px]">{missionVision.title}</h2>
+          <div className="mt-[32px] grid gap-[20px] lg:grid-cols-2">
+            {missionVision.items.map((item, i) => {
+              const Icon = i === 0 ? Target : Eye;
+              return (
+                <div key={item.title} className="relative overflow-hidden rounded-[28px] border border-brand-popup-border bg-white p-[28px] shadow-rail-card lg:p-[36px]">
+                  <span aria-hidden="true" className="absolute -right-[40px] -top-[40px] size-[140px] rounded-full bg-brand/[0.05]" />
+                  <span className="relative flex size-[56px] items-center justify-center rounded-[18px] bg-[linear-gradient(140deg,#0142aa,#3b82f6)] text-white shadow-[0_10px_20px_rgba(1,66,170,0.28)]">
+                    <Icon aria-hidden="true" className="size-[26px]" />
+                  </span>
+                  <h3 className="relative mt-[18px] font-ui text-[24px] font-bold text-heading">{item.title}</h3>
+                  <p className={`${BODY} relative mt-[8px] text-ink-body`}>
+                    <RichText text={item.text} />
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      <section className="bg-heading">
-        <div className="mx-auto flex max-w-[1240px] flex-col items-center px-[20px] py-[60px] text-center lg:min-h-[330px] lg:justify-center">
-          <h2 className="font-ui text-[26px] font-semibold uppercase leading-[1.3] tracking-[3.3px] text-white lg:text-[34px]">
-            {cta.title}
-          </h2>
-          <p className="mt-[15px] font-ui text-[16px] leading-[1.35] text-info-ctaText lg:text-[19px]">
-            {cta.text}
-          </p>
-          <Link
-            href={cta.href}
-            className="mt-[30px] inline-flex h-[48px] items-center rounded-[5px] bg-brand px-[34px] font-ui text-[14px] font-semibold uppercase text-white transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          >
-            {cta.button}
-          </Link>
+      {/* Why shop with YouMart. */}
+      <section className="mx-auto max-w-[1240px] px-[20px] py-[50px] lg:py-[80px]">
+        <p className={`${EYEBROW} text-center text-brand`}>Why YouMart</p>
+        <h2 className="mt-[8px] text-center font-ui text-[28px] font-bold leading-[1.25] text-heading lg:text-[36px]">Shopping made simple</h2>
+        <ul className="mt-[32px] grid gap-[16px] sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { Icon: BadgeCheck, title: 'Genuine products', text: 'Quality-checked items from trusted brands.' },
+            { Icon: Wallet, title: 'Instant refunds', text: 'Refunds land in your YouMart Wallet right away.' },
+            { Icon: ShieldCheck, title: 'Secure payments', text: 'UPI, cards and net banking through Razorpay.' },
+            { Icon: Headset, title: 'Real help', text: 'AI answers 24×7, and our team on WhatsApp.' },
+          ].map(({ Icon, title, text }) => (
+            <li key={title} className="rounded-[24px] border border-brand-popup-border bg-white p-[22px] shadow-rail-card transition-shadow hover:shadow-product-card">
+              <span className="flex size-[48px] items-center justify-center rounded-[16px] bg-brand-popup-bg text-brand">
+                <Icon aria-hidden="true" className="size-[23px]" />
+              </span>
+              <p className="mt-[14px] font-ui text-[17px] font-bold text-heading">{title}</p>
+              <p className="mt-[4px] font-ui text-[14px] leading-[1.55] text-ink-muted">{text}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Talk to us. */}
+      <section className="mx-auto max-w-[1240px] px-[20px] pb-[56px] lg:pb-[80px]">
+        <div className="relative flex flex-col items-center overflow-hidden rounded-[28px] bg-[linear-gradient(120deg,#061a45_0%,#0142aa_60%,#1e88e5_100%)] px-[24px] py-[44px] text-center lg:py-[56px]">
+          <span aria-hidden="true" className="absolute -right-[60px] -top-[80px] size-[260px] rounded-full bg-white/[0.07]" />
+          <span aria-hidden="true" className="absolute -bottom-[90px] -left-[40px] size-[220px] rounded-full bg-white/[0.05]" />
+          <h2 className="relative font-ui text-[26px] font-bold leading-[1.3] text-white lg:text-[34px]">{cta.title}</h2>
+          <p className="relative mt-[10px] max-w-[640px] font-ui text-[16px] leading-[1.5] text-white/80 lg:text-[18px]">{cta.text}</p>
+          <div className="relative mt-[24px] flex flex-wrap justify-center gap-[10px]">
+            <Link
+              href={cta.href}
+              className="inline-flex h-[50px] items-center gap-[8px] rounded-[16px] bg-[#ffd60a] px-[26px] font-ui text-[15px] font-bold text-[#1f1300] transition-[filter] hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              {cta.button} <ArrowRight aria-hidden="true" className="size-[17px]" />
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex h-[50px] items-center gap-[8px] rounded-[16px] bg-white/10 px-[26px] font-ui text-[15px] font-bold text-white ring-1 ring-white/30 hover:bg-white/20"
+            >
+              Start shopping
+            </Link>
+          </div>
         </div>
       </section>
     </>

@@ -1,21 +1,16 @@
 'use client';
 
 import { useEffect } from 'react';
-import Link from 'next/link';
-import { Clock, Heart, LifeBuoy, RotateCcw, ShoppingBasket, Star, TicketPercent, Wallet } from 'lucide-react';
-import { ROUTES, authUserLabel } from '@youmart/shared-client';
+import { LogIn, PackageSearch, UserPlus, UserRound, Wallet, Zap } from 'lucide-react';
 import { reloadUser, useSession } from '@/lib/session';
 import { AccountShell } from './AccountShell';
+import { DeskAccount } from './DeskAccount';
 import { AppAccount } from './AppAccount';
 import { AppSignIn } from './AppSignIn';
-import { LogoutButton } from './LogoutButton';
-import { OrdersList } from './OrdersList';
 import { LoginMethods } from './LoginMethods';
 import { RegisterMethods } from './RegisterMethods';
-import { BODY_TEXT, TEXT_LINK } from './formStyles';
 
-const HEADING =
-  'font-ui text-[20px] font-semibold leading-[1.3] text-heading md:text-[25px] min-[922px]:text-[34px]';
+const HEADING = 'font-ui text-[22px] font-bold leading-[1.25] text-heading';
 
 /** /account is the login page when signed out (as on live) and the dashboard when signed in. */
 export function MyAccountView({ returnTo }: { returnTo?: string }) {
@@ -33,14 +28,14 @@ export function MyAccountView({ returnTo }: { returnTo?: string }) {
         {session.status === 'anonymous' ? (
           <LoginView returnTo={returnTo} />
         ) : (
-          <Dashboard label={authUserLabel(session.user)} />
+          <Dashboard />
         )}
       </div>
     </>
   );
 }
 
-function Dashboard({ label }: { label: string }) {
+function Dashboard() {
   useEffect(() => {
     // Real authenticated read (GET /api/auth/me): refreshes the profile and exercises the
     // expired-token path (401 -> silent refresh -> retry).
@@ -49,82 +44,63 @@ function Dashboard({ label }: { label: string }) {
 
   return (
     <AccountShell active="dashboard">
-      <h1 className="sr-only">My account</h1>
-      <div className={`${BODY_TEXT} mb-[25.6px]`}>
-        Hello <strong>{label}</strong> (not <strong>{label}</strong>?{' '}
-        <LogoutButton className={TEXT_LINK}>Log out</LogoutButton>)
-      </div>
-      <p className={`${BODY_TEXT} mb-[25.6px]`}>
-        From your account dashboard you can view your{' '}
-        <Link href={ROUTES.orders} className={TEXT_LINK}>
-          recent orders
-        </Link>
-        , manage your{' '}
-        <Link href={ROUTES.addresses} className={TEXT_LINK}>
-          shipping and billing addresses
-        </Link>
-        , and{' '}
-        <Link href={ROUTES.accountDetails} className={TEXT_LINK}>
-          edit your account details
-        </Link>
-        .
-      </p>
-      {/* v1.12: quick tiles (Flipkart-style) for the most used account pages. */}
-      <ul className="mb-[28px] grid grid-cols-2 gap-[12px] md:grid-cols-3 lg:grid-cols-4">
-        {[
-          { href: ROUTES.orders, label: 'Orders', sub: 'Track & manage', Icon: ShoppingBasket },
-          { href: ROUTES.wallet, label: 'YouMart Wallet', sub: 'Balance & refunds', Icon: Wallet },
-          { href: ROUTES.returns, label: 'Returns', sub: 'Return & refund status', Icon: RotateCcw },
-          { href: ROUTES.wishlist, label: 'Wishlist', sub: 'Saved items', Icon: Heart },
-          { href: ROUTES.coupons, label: 'Coupons', sub: 'Offers for you', Icon: TicketPercent },
-          {
-            href: ROUTES.recentlyViewed,
-            label: 'Recently viewed',
-            sub: 'Your history',
-            Icon: Clock,
-          },
-          { href: ROUTES.myReviews, label: 'My reviews', sub: 'Rate & edit', Icon: Star },
-          { href: ROUTES.help, label: 'Help Center', sub: 'Get help, follow requests', Icon: LifeBuoy },
-        ].map(({ href, label, sub, Icon }) => (
-          <li key={href}>
-            <Link
-              href={href}
-              className="flex h-full flex-col gap-[6px] rounded-[12px] border border-catalog-rule bg-white p-[14px] font-ui transition-shadow hover:shadow-product-card focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-            >
-              <Icon aria-hidden="true" className="size-[22px] text-brand" />
-              <span className="text-[15px] font-semibold text-heading">{label}</span>
-              <span className="text-[12.5px] text-ink-muted">{sub}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <h2 className="mb-[12px] font-ui text-[20px] font-semibold leading-[26px] text-heading">
-        Recent orders
-      </h2>
-      <OrdersList limit={3} paged={false} emptyText="You haven't placed an order yet." />
+      <DeskAccount />
     </AccountShell>
   );
 }
 
-// Live logged-out /my-account: WooCommerce Login | Register columns (stacked below 922px).
+// Logged-out /account on desktop: a welcome band, then Login and Register side by side as cards.
 function LoginView({ returnTo }: { returnTo?: string }) {
   return (
-    <div className="mx-auto max-w-[1240px] px-[20px] pt-[10px] lg:mb-[64px] lg:mt-[88px] lg:pt-0">
+    <div className="mx-auto max-w-[1240px] px-[20px] pt-[10px] font-ui lg:mb-[64px] lg:mt-[32px] lg:pt-0">
       <h1 className="sr-only">My account</h1>
-      <div className="min-[922px]:flex min-[922px]:justify-between">
-        <section aria-labelledby="login-heading" className="min-[922px]:w-[48%]">
-          {/* Live renders these at 13px on mobile; 20px is the flagged fix. */}
-          <h2 id="login-heading" className={HEADING}>
-            Login
-          </h2>
-          <LoginMethods returnTo={returnTo} />
-        </section>
-        <section aria-labelledby="register-heading" className="min-[922px]:w-[48%]">
-          <h2 id="register-heading" className={HEADING}>
-            Register
-          </h2>
-          <RegisterMethods returnTo={returnTo} />
-        </section>
+      <section className="relative mb-[22px] overflow-hidden rounded-[28px] bg-[linear-gradient(125deg,#0142aa_0%,#1d5fd1_55%,#3b82f6_100%)] px-[32px] py-[26px] text-white shadow-[0_18px_40px_rgba(1,66,170,0.25)]">
+        <span aria-hidden="true" className="absolute -right-[60px] -top-[80px] size-[240px] rounded-full bg-white/10" />
+        <div className="relative flex items-center gap-[24px]">
+          <span className="flex size-[64px] shrink-0 items-center justify-center rounded-[20px] bg-white/15">
+            <UserRound aria-hidden="true" className="size-[32px]" />
+          </span>
+          <div className="flex-1">
+            <p className="text-[28px] font-bold leading-[1.2]">Welcome to YouMart</p>
+            <p className="mt-[2px] text-[15px] text-white/85">Sign in for order tracking, instant wallet refunds and faster checkout.</p>
+          </div>
+          <ul className="flex gap-[10px]">
+            {[
+              { Icon: PackageSearch, text: 'Track orders' },
+              { Icon: Wallet, text: 'Instant refunds' },
+              { Icon: Zap, text: 'Faster checkout' },
+            ].map(({ Icon, text }) => (
+              <li key={text} className="flex items-center gap-[8px] rounded-full bg-white/15 px-[14px] py-[8px] text-[13.5px] font-semibold">
+                <Icon aria-hidden="true" className="size-[16px] text-[#ffd60a]" /> {text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      <div className="min-[922px]:flex min-[922px]:items-start min-[922px]:justify-between min-[922px]:gap-[22px]">
+        {[
+          { id: 'login', title: 'Login', sub: 'Welcome back - use your mobile number, email or username.', Icon: LogIn, body: <LoginMethods returnTo={returnTo} /> },
+          { id: 'register', title: 'Register', sub: 'New here? Create your account in under a minute.', Icon: UserPlus, body: <RegisterMethods returnTo={returnTo} /> },
+        ].map(({ id, title, sub, Icon, body }) => (
+          <section
+            key={id}
+            aria-labelledby={`${id}-heading`}
+            className="mb-[20px] rounded-[24px] border border-brand-popup-border bg-white p-[28px] shadow-rail-card min-[922px]:w-1/2"
+          >
+            <div className="mb-[8px] flex items-center gap-[14px]">
+              <span className="flex size-[48px] items-center justify-center rounded-[16px] bg-[linear-gradient(140deg,#0142aa,#3b82f6)] text-white">
+                <Icon aria-hidden="true" className="size-[22px]" />
+              </span>
+              <div>
+                <h2 id={`${id}-heading`} className={HEADING}>
+                  {title}
+                </h2>
+                <p className="text-[13.5px] text-ink-muted">{sub}</p>
+              </div>
+            </div>
+            {body}
+          </section>
+        ))}
       </div>
     </div>
   );

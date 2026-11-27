@@ -221,7 +221,7 @@ export function DeskOrdersView({
 
 const PREVIEW = 3;
 
-function DeskOrderCard({ order, cards }: { order: OrderListItem; cards: Record<string, Card> }) {
+export function DeskOrderCard({ order, cards }: { order: OrderListItem; cards: Record<string, Card> }) {
   const [expanded, setExpanded] = useState(false);
   const ls = shownLines(order);
   const cancelled = lines(order).filter((l) => l.sellerStatus === 'CANCELLED');
