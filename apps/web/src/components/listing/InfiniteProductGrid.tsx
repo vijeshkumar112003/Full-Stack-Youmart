@@ -23,8 +23,8 @@ export function InfiniteProductGrid({
   loadMore: (page: number) => Promise<ProductCardData[]>;
   gridClassName: string;
   priorityCount?: number;
-  /** 'mini' = the app's compact card with Add / Buy (phone layouts). */
-  card?: 'listing' | 'mini' | 'responsive';
+  /** 'mini' = the app's compact card with Add / Buy (phone layouts); 'desk' = its desktop size. */
+  card?: 'listing' | 'mini' | 'desk' | 'responsive';
 }) {
   const [products, setProducts] = useState(initial);
   const [page, setPage] = useState(1);
@@ -69,9 +69,11 @@ export function InfiniteProductGrid({
     <>
       <ul className={gridClassName}>
         {products.map((product, i) => (
-          <li key={product.id} className={card === 'mini' ? '' : card === 'responsive' ? 'lg:mb-[10px]' : 'mb-[10px]'}>
+          <li key={product.id} className={card === 'mini' || card === 'desk' ? '' : card === 'responsive' ? 'lg:mb-[10px]' : 'mb-[10px]'}>
             {card === 'mini' ? (
               <MiniProductCard product={product} />
+            ) : card === 'desk' ? (
+              <MiniProductCard product={product} size="desktop" />
             ) : card === 'responsive' ? (
               <>
                 <div className="h-full lg:hidden">

@@ -97,7 +97,7 @@ interface LightboxProps {
   onClose: () => void;
 }
 
-function Lightbox({ images, title, index, onIndex, onClose }: LightboxProps) {
+export function Lightbox({ images, title, index, onIndex, onClose }: LightboxProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const count = images.length;
   const go = useCallback(

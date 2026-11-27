@@ -102,9 +102,7 @@ export function AppCategoryLayout({
         <h1 className="truncate px-[2px] font-ui text-[17px] font-bold text-heading">{title}</h1>
         <div className="mt-[6px] flex items-center justify-between gap-[8px] px-[2px]">
           <span className="font-ui text-[12.5px] font-semibold text-ink-muted">{brands.length > 0 ? 'Shop by brand' : ''}</span>
-          <div className="rounded-full border border-brand/30 bg-white px-[10px] py-[3px] [&_button]:!text-[12.5px] [&_button]:!font-semibold [&_button]:!text-brand [&_svg]:!mr-[5px] [&_svg]:!size-[14px]">
-            {filterButton}
-          </div>
+          {filterButton}
         </div>
         {brands.length > 0 ? (
           <div className="-mx-[8px] mt-[8px] flex gap-[6px] overflow-x-auto px-[8px] pb-[4px] [scrollbar-width:none]">

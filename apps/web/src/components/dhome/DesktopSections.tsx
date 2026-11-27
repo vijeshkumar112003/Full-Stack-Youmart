@@ -44,7 +44,7 @@ export const DESK = 'mx-auto w-full max-w-[1440px] px-[32px]';
 /* ------------------------------------------------------------------ helpers */
 
 /** A horizontal row that scrolls by a page with arrow buttons (no visible scrollbar). */
-function useRow() {
+export function useRow() {
   const ref = useRef<HTMLDivElement>(null);
   const [edges, setEdges] = useState({ start: true, end: false });
   const update = useCallback(() => {
@@ -61,10 +61,10 @@ function useRow() {
   return { ref, onScroll: update, edges, page };
 }
 
-const ROW =
+export const ROW =
   'flex snap-x snap-mandatory gap-[20px] overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden';
 
-function Arrows({ edges, page, tone = 'light' }: { edges: { start: boolean; end: boolean }; page: (d: 1 | -1) => void; tone?: 'light' | 'dark' }) {
+export function Arrows({ edges, page, tone = 'light' }: { edges: { start: boolean; end: boolean }; page: (d: 1 | -1) => void; tone?: 'light' | 'dark' }) {
   const base =
     tone === 'dark'
       ? 'border-white/30 bg-white/15 text-white hover:bg-white hover:text-brand'
@@ -82,7 +82,7 @@ function Arrows({ edges, page, tone = 'light' }: { edges: { start: boolean; end:
 }
 
 /** The app's section heading (blue accent bar + title + subtitle), desktop size, with a right slot. */
-function Head({ title, sub, chip, right }: { title: React.ReactNode; sub?: string; chip?: React.ReactNode; right?: React.ReactNode }) {
+export function Head({ title, sub, chip, right }: { title: React.ReactNode; sub?: string; chip?: React.ReactNode; right?: React.ReactNode }) {
   return (
     <div className="mb-[20px] flex items-end justify-between gap-[16px]">
       <div className="flex items-center gap-[12px]">

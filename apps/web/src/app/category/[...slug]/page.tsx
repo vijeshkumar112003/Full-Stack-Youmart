@@ -1,15 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { categoryHref, listingQueryString, parseListingQuery } from '@youmart/shared-client';
+import Link from 'next/link';
 import { CategoryBar } from '@/components/category/CategoryBar';
-import {
-  CategoryBreadcrumb,
-  CategoryTaxonomySidebar,
-} from '@/components/category/CategoryTaxonomySidebar';
-import { BrandSlider } from '@/components/listing/BrandSlider';
-import { CategorySidebar } from '@/components/listing/CategorySidebar';
-import { CheckoutSteps } from '@/components/listing/CheckoutSteps';
-import { FilterDrawer } from '@/components/listing/FilterDrawer';
+import { CategoryTaxonomySidebar } from '@/components/category/CategoryTaxonomySidebar';
+import { DeskBrandWall, DeskCategoryHero, DeskSortBar } from '@/components/category/DeskCategory';
+import { categoryBrands } from '@/lib/category-brands';
+import { FilterSheet } from '@/components/listing/FilterSheet';
 import { InfiniteProductGrid } from '@/components/listing/InfiniteProductGrid';
 import { RelatedCategories } from '@/components/listing/RelatedCategories';
 import { AppCategoryLayout } from '@/components/category/AppCategoryLayout';
@@ -35,10 +32,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const query = parseListingQuery(searchParams);
   const listing = await getCategoryListing(path, { ...query, page: 1 });
   const basePath = categoryHref(...path);
-  // `brand` is the one conventional attribute key (IMPORT-SPEC.md) - shown as live's brand strip.
-  const brandFilter = listing.filters?.filters.find((f) => f.key === 'brand' && f.type !== 'range');
+  // Only the brands that have products in this category (the category's brand facet).
+  const brands = categoryBrands(listing.filters);
   const context = categoryContext(path);
   const title = context?.trail[context.trail.length - 1]?.name ?? node.name;
+
+  const here = context?.main.subcategories.flatMap((sub) => [sub, ...sub.children]).find((n) => n.match === 'catalog' && n.href === basePath);
+  const heroImage = here?.image ?? context?.main.image.mobile ?? null;
 
   async function loadMore(page: number) {
     'use server';
@@ -56,10 +56,8 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           title={title}
           basePath={basePath}
           query={query}
-          brands={brandFilter?.values ?? []}
-          filterButton={
-            <FilterDrawer key={`m-${listingQueryString(query)}`} basePath={basePath} query={query} filters={listing.filters} />
-          }
+          brands={brands}
+          filterButton={<FilterSheet key={`m-${listingQueryString(query)}`} variant="pill" basePath={basePath} query={query} filters={listing.filters} />}
         >
           {listing.products.length > 0 ? (
             <InfiniteProductGrid
@@ -78,47 +76,43 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           )}
         </AppCategoryLayout>
       </div>
-      <div className="mt-[10px] hidden pr-[20px] lg:mx-auto lg:flex lg:mt-[14px] lg:max-w-[1440px] lg:gap-[24px] lg:px-[12px]">
-        {/* Below 1025px the live sidebar stays; desktop has the redesign's taxonomy sidebar. */}
-        <div className="contents lg:hidden">
-          <CategorySidebar category={node.root} activeSlug={path[1]} />
-        </div>
+      {/* Desktop: the app's category screen laid out for a wide screen. */}
+      <div className="mx-auto hidden max-w-[1440px] gap-[24px] px-[32px] pb-[8px] pt-[18px] lg:flex">
         {context && <CategoryTaxonomySidebar main={context.main} currentHref={basePath} />}
         <div className="min-w-0 flex-1">
-          <h1 className="sr-only lg:hidden">{node.name}</h1>
-          {context && (
-            <div className="mb-[12px] hidden rounded-[16px] border border-cart-line bg-white px-[18px] py-[14px] shadow-rail-card lg:block">
-              <CategoryBreadcrumb trail={context.trail} />
-              <h1 className="mt-[6px] font-ui text-[26px] font-bold leading-[1.2] text-heading">
-                {title}
-              </h1>
-            </div>
-          )}
-          <div className="lg:hidden">
-            <CheckoutSteps current={node.name} />
-          </div>
-          <FilterDrawer
-            key={listingQueryString(query)}
+          <DeskCategoryHero
+            trail={context?.trail ?? [{ name: node.name, href: basePath }]}
+            title={title}
+            total={listing.total}
+            brandCount={brands.length}
+            image={heroImage}
+          />
+          <DeskBrandWall brands={brands} basePath={basePath} query={query} categoryName={title} />
+          <DeskSortBar
             basePath={basePath}
             query={query}
             filters={listing.filters}
+            filterButton={<FilterSheet key={`d-${listingQueryString(query)}`} variant="desk" hideSort basePath={basePath} query={query} filters={listing.filters} />}
           />
-          {brandFilter && <BrandSlider filter={brandFilter} basePath={basePath} query={query} />}
-
           {listing.products.length > 0 ? (
-            <div className="mt-[10px]">
+            <div className="mt-[18px]">
               <InfiniteProductGrid
                 initial={listing.products}
                 total={listing.total}
                 loadMore={loadMore}
-                gridClassName="mb-[16px] grid grid-cols-2 gap-x-[10px] md:grid-cols-3 md:gap-x-[20px] lg:grid-cols-4"
-                priorityCount={4}
+                card="desk"
+                gridClassName="grid grid-cols-4 gap-[16px] 2xl:grid-cols-5"
               />
             </div>
           ) : (
-            <p className="my-[30px] font-ui text-[16px] text-ink-body">
-              No products were found matching your selection.
-            </p>
+            <div className="mt-[18px] flex flex-col items-center gap-[10px] rounded-[20px] border border-brand-popup-border bg-white py-[56px] text-center shadow-rail-card">
+              <span className="flex size-[72px] items-center justify-center rounded-full bg-brand-popup-bg font-ui text-[30px]">📦</span>
+              <p className="font-ui text-[18px] font-bold text-heading">No products match these filters</p>
+              <p className="text-[14px] text-ink-muted">Try another brand or clear the filters.</p>
+              <Link href={basePath} className="mt-[6px] rounded-[12px] bg-brand px-[20px] py-[10px] font-ui text-[14px] font-bold text-white hover:bg-[#013a96]">
+                Show all {title}
+              </Link>
+            </div>
           )}
 
           <RelatedCategories path={path} />

@@ -16,6 +16,7 @@ import { ProductRail } from '@/components/product/ProductRail';
 import { ProductSectionNav } from '@/components/product/ProductSectionNav';
 import { ProductTabs } from '@/components/product/ProductTabs';
 import { ProductHero } from '@/components/product/ProductHero';
+import { DeskProductMain, DeskProductRail } from '@/components/product/DeskProduct';
 import { ProductViewTracker } from '@/components/product/ProductViewTracker';
 import { ShareButtons } from '@/components/product/ShareButtons';
 import { ShopWithAssurance } from '@/components/product/ShopWithAssurance';
@@ -106,7 +107,27 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <>
       <ProductViewTracker productId={product.id} />
       <CategoryBar mains={categoryBarMains()} />
-      <div className="mx-auto mt-[10px] max-w-[1240px] px-[20px] lg:my-[64px]">
+      {/* Desktop: the app's product screen laid out for a wide screen. */}
+      <div className="mx-auto hidden max-w-[1440px] px-[32px] pb-[16px] pt-[20px] lg:block">
+        <DeskProductMain product={product}>
+          <DeskProductRail title="Complete your choice" sub="Goes well with this" products={product.related} />
+          <DeskProductRail title="Similar products" sub="More like this one" products={similar} />
+          {gridInitial.length > 0 ? (
+            <div className="mt-[32px]">
+              <div className="mb-[20px] flex items-center gap-[12px]">
+                <span aria-hidden="true" className="h-[44px] w-[5px] rounded-[3px] bg-brand" />
+                <div>
+                  <h2 className="font-ui text-[26px] font-bold leading-[32px] text-heading">More to Explore</h2>
+                  <p className="font-ui text-[14px] font-medium text-ink-muted">Keep browsing this category</p>
+                </div>
+              </div>
+              <InfiniteProductGrid initial={gridInitial} total={moreRes.total} loadMore={loadMoreExplore} card="desk" gridClassName="grid grid-cols-5 gap-[16px]" />
+            </div>
+          ) : null}
+        </DeskProductMain>
+      </div>
+      {/* Phones / tablets. */}
+      <div className="mx-auto mt-[10px] max-w-[1240px] px-[20px] lg:hidden">
         <ProductTopBar title={product.title} />
         <ProductHero product={product} reviewCount={reviewCount}>
             <div className="mt-[16px]">

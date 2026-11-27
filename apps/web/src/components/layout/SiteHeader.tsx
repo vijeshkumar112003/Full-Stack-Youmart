@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bell, Headset, Package, QrCode } from 'lucide-react';
+import { Bell, Bookmark, Headset, MessagesSquare, Package, QrCode, ShoppingCart, User } from 'lucide-react';
 import { ROUTES } from '@youmart/shared-client';
 import { useSession } from '@/lib/session';
 import { useCartCount } from '@/lib/cart';
@@ -13,7 +13,6 @@ import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { DeliveryBar } from './DeliveryBar';
 import { hidesShopHeader } from '@/lib/phone-screens';
-import { AppNavIcon } from './MobileBottomNav';
 
 function TwoLineLabel({ lines, className }: { lines: [string, string?]; className: string }) {
   return (
@@ -148,30 +147,22 @@ export function SiteHeader() {
               href={ROUTES.wishlist}
               label={['Favourites']}
               ariaLabel={`Favourites, ${wishlistCount} ${wishlistCount === 1 ? 'item' : 'items'}`}
-              icon={<AppNavIcon name="bookmark" className="size-[24px]" />}
+              icon={<Bookmark aria-hidden="true" className="size-[24px]" strokeWidth={1.8} />}
               badge={wishlistCount}
             />
-            <Link href="/ask" aria-label="Ask - Yumo and YouFind Bot" className="flex w-[62px] flex-col items-center gap-[3px] rounded-[12px] py-[6px] hover:bg-brand-popup-bg">
-              <span className="relative grid size-[26px] place-items-center">
-                <span aria-hidden="true" className="absolute size-[30px] animate-pulse rounded-full bg-[#14b8a6]/60" />
-                <span className="relative grid size-[26px] place-items-center rounded-full bg-[linear-gradient(135deg,#38bdf8_0%,#0142aa_50%,#0d9488_100%)]">
-                  <AppNavIcon name="chatbubbles" className="size-[14px] text-white" />
-                </span>
-              </span>
-              <span className="font-ui text-[11.5px] font-bold leading-[13px] text-brand">Ask</span>
-            </Link>
+            <DeskTile href="/ask" label={['Ask']} ariaLabel="Ask - Yumo and YouFind Bot" icon={<MessagesSquare aria-hidden="true" className="size-[24px]" strokeWidth={1.8} />} />
             <DeskTile
               href={ROUTES.cart}
               label={['My Cart']}
               ariaLabel={cartLinkLabel(cartCount)}
-              icon={<AppNavIcon name="cart" className="size-[24px]" />}
+              icon={<ShoppingCart aria-hidden="true" className="size-[24px]" strokeWidth={1.8} />}
               badge={cartCount}
             />
             <DeskTile
               href={ROUTES.account}
               label={session.status === 'authenticated' ? [`Hi, ${firstName ?? 'there'}`] : ['Account']}
               ariaLabel={session.status === 'authenticated' ? 'My account (signed in)' : 'Account'}
-              icon={<AppNavIcon name="person" className="size-[24px]" />}
+              icon={<User aria-hidden="true" className="size-[24px]" strokeWidth={1.8} />}
             />
           </nav>
         </div>

@@ -21,7 +21,8 @@ const MAX_QTY = 999;
 // Once the product is in the cart, ADD TO CART becomes a yellow "Go to Cart" (as in the app).
 // Buy Now (signed in) checks out just this product - the rest of the cart stays; a guest adds it
 // and goes to checkout, where they sign in.
-export function PurchasePanel({ product, title }: PurchasePanelProps) {
+/** Add / Buy Now for one SKU: shared by the phone panel and the desktop buy box. */
+export function usePurchase(product: CartProduct | null) {
   const router = useRouter();
   const addToCart = useAddToCart();
   const { cart, mode } = useCart();
@@ -45,6 +46,11 @@ export function PurchasePanel({ product, title }: PurchasePanelProps) {
       setBusy(null);
     }
   };
+  return { cart, inCart, qty, setQty, clamp, busy, run, MAX_QTY };
+}
+
+export function PurchasePanel({ product, title }: PurchasePanelProps) {
+  const { cart, inCart, qty, setQty, clamp, busy, run } = usePurchase(product);
 
   const onSubmit = (event: FormEvent) => {
     event.preventDefault();
