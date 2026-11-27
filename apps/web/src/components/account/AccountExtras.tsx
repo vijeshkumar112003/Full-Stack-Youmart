@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { AtSign, Camera, KeyRound, Loader2, Lock, Mail, Phone, Trash2 } from 'lucide-react';
+import { AtSign, Camera, KeyRound, Loader2, Lock, Mail, Phone, Trash2, UserRound } from 'lucide-react';
 import { ApiError, authUserLabel, formatPhone, type AuthUser } from '@youmart/shared-client';
 import { api } from '@/lib/api';
 import { applyUserUpdate, useSession } from '@/lib/session';
 import { cleanUsername, passwordOk, useUsernameCheck } from '@/lib/username';
 import { PasswordRules, UsernameHint } from './PasswordAuthForms';
-import { BTN_PRIMARY, BTN_SECONDARY, BTN_SMALL, Banner, INPUT, Panel } from './ui';
+import { BTN_PRIMARY, BTN_SECONDARY, BTN_SMALL, Banner, INPUT, PageHeader, Panel } from './ui';
 
 /** Longest side of the stored profile photo (the server caps the data URL at ~450 KB). */
 const AVATAR_SIDE = 320;
@@ -293,4 +293,9 @@ export function LoginSecurityPanel() {
       ) : null}
     </Panel>
   );
+}
+
+/** The Account details title card (a client component, so the icon can be passed to it). */
+export function AccountDetailsHeader() {
+  return <PageHeader title="Account details" icon={UserRound} subtitle="Your profile, contact details and how you sign in." />;
 }
